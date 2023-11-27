@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 
 import { CategoryHeaderService } from './category-header.service';
@@ -17,6 +19,7 @@ export class CategoryHeaderController {
   constructor(private readonly categoryHeaderService: CategoryHeaderService) {}
 
   // @Post()
+  // @UsePipes(new ValidationPipe())
   // create(@Body() createCategoryHeaderDto: CreateCategoryHeaderDto) {
   //   return this.categoryHeaderService.create(createCategoryHeaderDto);
   // }

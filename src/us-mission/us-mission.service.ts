@@ -13,9 +13,9 @@ export class UsMissionService {
     private readonly categoryHeaderRepository: Repository<UsMission>,
   ) {}
 
-  async create(createUsMissionDto: CreateUsMissionDto) {
-    return await this.categoryHeaderRepository.save(createUsMissionDto);
-  }
+  // async create(createUsMissionDto: CreateUsMissionDto) {
+  //   return await this.categoryHeaderRepository.save(createUsMissionDto);
+  // }
 
   async findAll() {
     return await this.categoryHeaderRepository.find();

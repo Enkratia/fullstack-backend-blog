@@ -13,16 +13,16 @@ export class CategoryDescriptionService {
     private readonly categoryDescriptionRepository: Repository<CategoryDescription>,
   ) {}
 
-  async create(createCategoryDescriptionDto: CreateCategoryDescriptionDto[]) {
-    let response = [];
+  // async create(createCategoryDescriptionDto: CreateCategoryDescriptionDto[]) {
+  //   let response = [];
 
-    for await (const item of createCategoryDescriptionDto) {
-      const result = await this.categoryDescriptionRepository.save(item);
-      response.push(result);
-    }
+  //   for (const item of createCategoryDescriptionDto) {
+  //     const result = await this.categoryDescriptionRepository.save(item);
+  //     response.push(result);
+  //   }
 
-    return response;
-  }
+  //   return response;
+  // }
 
   async findAll() {
     const response = await this.categoryDescriptionRepository.find();

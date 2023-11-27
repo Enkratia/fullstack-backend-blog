@@ -1,23 +1,10 @@
-import { IsEmpty } from 'class-validator';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-// type AboutType = {
-//   title: string;
-//   description: string;
-// };
-
-// type MissionType = {
-//   title: string;
-//   description: string;
-// };
-
-// @Entity()
 class AboutEntity {
   title: string;
   description: string;
 }
 
-// @Entity()
 class MissionEntity {
   title: string;
   description: string;
@@ -25,7 +12,10 @@ class MissionEntity {
 
 @Entity()
 export class UsMission {
-  @PrimaryColumn('simple-json')
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column('simple-json')
   about: AboutEntity;
 
   @Column('simple-json')

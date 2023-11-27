@@ -1,7 +1,7 @@
-import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
-class AboutEntity {
+class AboutDto {
   @IsString()
   title: string;
 
@@ -9,7 +9,7 @@ class AboutEntity {
   description: string;
 }
 
-class MissionEntity {
+class MissionDto {
   @IsString()
   title: string;
 
@@ -20,11 +20,11 @@ class MissionEntity {
 export class CreateUsMissionDto {
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => AboutEntity)
-  about: AboutEntity;
+  @Type(() => AboutDto)
+  about: AboutDto;
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => MissionEntity)
-  mission: MissionEntity;
+  @Type(() => MissionDto)
+  mission: MissionDto;
 }

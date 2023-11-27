@@ -18,11 +18,11 @@ import { UpdateUsMissionDto } from './dto/update-us-mission.dto';
 export class UsMissionController {
   constructor(private readonly usMissionService: UsMissionService) {}
 
-  @Post()
-  @UsePipes(new ValidationPipe())
-  create(@Body() createUsMissionDto: CreateUsMissionDto) {
-    return this.usMissionService.create(createUsMissionDto);
-  }
+  // @Post()
+  // @UsePipes(new ValidationPipe())
+  // create(@Body() createUsMissionDto: CreateUsMissionDto) {
+  //   return this.usMissionService.create(createUsMissionDto);
+  // }
 
   @Get()
   findAll() {

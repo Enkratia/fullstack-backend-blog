@@ -20,10 +20,11 @@ export class CategoryDescriptionController {
     private readonly categoryDescriptionService: CategoryDescriptionService,
   ) {}
 
-  @Post()
-  create(@Body() createCategoryDescriptionDto: CreateCategoryDescriptionDto[]) {
-    return this.categoryDescriptionService.create(createCategoryDescriptionDto);
-  }
+  // @Post()
+  // @UsePipes(new ValidationPipe())
+  // create(@Body() createCategoryDescriptionDto: CreateCategoryDescriptionDto[]) {
+  //   return this.categoryDescriptionService.create(createCategoryDescriptionDto);
+  // }
 
   @Get()
   findAll() {
