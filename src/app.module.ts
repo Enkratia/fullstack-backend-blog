@@ -16,6 +16,8 @@ import { TestimonialStaticModule } from './testimonial-static/testimonial-static
 import { WhyThisBlogModule } from './why-this-blog/why-this-blog.module';
 import { KnowMoreModule } from './know-more/know-more.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { ContactUsModule } from './contact-us/contact-us.module';
     WhyThisBlogModule,
     KnowMoreModule,
     ContactUsModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
