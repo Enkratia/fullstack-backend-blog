@@ -5,6 +5,9 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
+  fullname: string;
+
+  @IsString()
   @MinLength(6, { message: 'Must be 6 symbols or more' })
   password: string;
 }

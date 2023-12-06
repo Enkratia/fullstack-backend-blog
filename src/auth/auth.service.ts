@@ -32,7 +32,10 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, id: user.id };
+    const payload = {
+      email: user.email,
+      id: user.id,
+    };
 
     return {
       user,
@@ -61,7 +64,7 @@ export class AuthService {
 
   async refreshToken(user: any) {
     const payload = {
-      username: user.username,
+      email: user.email,
       id: user.id,
     };
 
