@@ -15,15 +15,13 @@ import { UsersController } from './users.controller';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET_KEY'),
         signOptions: {
-          expiresIn: configService.get<number>('JWT_ACCESS_EXPIRE_TIME', {
-            infer: true,
-          }),
+          expiresIn: configService.get('JWT_ACCESS_EXPIRE_TIME'),
         },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [UsersService],
+  providers: [UsersService, JwtService],
   controllers: [UsersController],
   exports: [UsersService],
 })

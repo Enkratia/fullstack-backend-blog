@@ -32,11 +32,6 @@ export class UsersService {
       password: await bcrypt.hash(createUserDto.password, saltRounds),
     });
 
-    // const token = this.jwtService.sign({
-    //   email: createUserDto.email,
-    //   id: user.id,
-    // });
-
     const payload = {
       email: user.email,
       id: user.id,
@@ -44,22 +39,7 @@ export class UsersService {
 
     return {
       user,
-      backendTokens: {
-        accessToken: await this.jwtService.signAsync(payload, {
-          expiresIn: `${process.env.JWT_ACCESS_EXPIRE_TIME}ms`,
-          secret: process.env.JWT_SECRET_KEY,
-        }),
-        refreshToken: await this.jwtService.signAsync(payload, {
-          expiresIn: `${process.env.JWT_REFRESH_EXPIRE_TIME}ms`,
-          secret: process.env.JWT_REFRESH_TOKEN_KEY,
-        }),
-        expiresIn: new Date().setTime(
-          new Date().getTime() + +process.env.JWT_ACCESS_EXPIRE_TIME,
-        ),
-        refreshExpiresIn: new Date().setTime(
-          new Date().getTime() + +process.env.JWT_REFRESH_EXPIRE_TIME,
-        ),
-      },
+      backendTokens: await this.generateBackendTokens(payload),
     };
   }
 
@@ -73,5 +53,25 @@ export class UsersService {
 
   async findAll() {
     return [];
+  }
+
+  // Передислоцировать в auth(?)
+  async generateBackendTokens(payload: { email: string; id: number }) {
+    return {
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,
+        secret: process.env.JWT_SECRET_KEY,
+      }),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME,
+        secret: process.env.JWT_REFRESH_TOKEN_KEY,
+      }),
+      expiresIn: new Date().setTime(
+        new Date().getTime() + +process.env.JWT_ACCESS_EXPIRE_TIME,
+      ),
+      refreshExpiresIn: new Date().setTime(
+        new Date().getTime() + +process.env.JWT_REFRESH_EXPIRE_TIME,
+      ),
+    };
   }
 }

@@ -1,19 +1,12 @@
 import * as bcrypt from 'bcrypt';
 
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../users/users.service';
 
-// const ACCESS_EXPIRE_TIME = 10 * 1000;
-// const REFRESH_EXPIRE_TIME = 20 * 1000;
-
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   async validateUser(email: string, pass: string) {
     let isPasswordMatch = false;
@@ -39,27 +32,8 @@ export class AuthService {
 
     return {
       user,
-      backendTokens: {
-        accessToken: await this.jwtService.signAsync(payload, {
-          expiresIn: `${process.env.JWT_ACCESS_EXPIRE_TIME}ms`,
-          secret: process.env.JWT_SECRET_KEY,
-        }),
-        refreshToken: await this.jwtService.signAsync(payload, {
-          expiresIn: `${process.env.JWT_REFRESH_EXPIRE_TIME}ms`,
-          secret: process.env.JWT_REFRESH_TOKEN_KEY,
-        }),
-        expiresIn: new Date().setTime(
-          new Date().getTime() + +process.env.JWT_ACCESS_EXPIRE_TIME,
-        ),
-        refreshExpiresIn: new Date().setTime(
-          new Date().getTime() + +process.env.JWT_REFRESH_EXPIRE_TIME,
-        ),
-      },
+      backendTokens: await this.usersService.generateBackendTokens(payload),
     };
-
-    // return {
-    //   access_token: this.jwtService.sign(payload),
-    // };
   }
 
   async refreshToken(user: any) {
@@ -69,22 +43,7 @@ export class AuthService {
     };
 
     return {
-      backendTokens: {
-        accessToken: await this.jwtService.signAsync(payload, {
-          expiresIn: `${process.env.JWT_ACCESS_EXPIRE_TIME}ms`,
-          secret: process.env.JWT_SECRET_KEY,
-        }),
-        refreshToken: await this.jwtService.signAsync(payload, {
-          expiresIn: `${process.env.JWT_REFRESH_EXPIRE_TIME}ms`,
-          secret: process.env.JWT_REFRESH_TOKEN_KEY,
-        }),
-        expiresIn: new Date().setTime(
-          new Date().getTime() + +process.env.JWT_ACCESS_EXPIRE_TIME,
-        ),
-        refreshExpiresIn: new Date().setTime(
-          new Date().getTime() + +process.env.JWT_REFRESH_EXPIRE_TIME,
-        ),
-      },
+      backendTokens: await this.usersService.generateBackendTokens(payload),
     };
   }
 }
