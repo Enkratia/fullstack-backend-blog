@@ -1,4 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+  Relation,
+} from 'typeorm';
+
+import { UserLinks } from './userLinks.entity';
 
 @Entity()
 export class User {
@@ -13,4 +24,24 @@ export class User {
 
   @Column()
   password: string;
+
+  // **
+  @Column({ default: '' })
+  profession: string;
+
+  @Column({ default: '' })
+  company: string;
+
+  @Column({ default: '' })
+  representation: string;
+
+  @OneToOne(() => UserLinks, (userLinks) => userLinks.user)
+  @JoinColumn({ name: 'userLinks_id' })
+  userLinks: Relation<UserLinks>;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

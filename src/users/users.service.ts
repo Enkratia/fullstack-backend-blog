@@ -1,17 +1,21 @@
 import * as bcrypt from 'bcrypt';
 
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserLinks } from './entities/userLinks.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    // @InjectRepository(UserLinks)
+    // private userLinksRepository: Repository<UserLinks>,
+    @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -26,10 +30,12 @@ export class UsersService {
 
     if (isExist) throw new BadRequestException('This email already exist');
 
+    const userLinks = new UserLinks();
     const user = await this.usersRepository.save({
       fullname: createUserDto.fullname,
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, saltRounds),
+      userLinks,
     });
 
     const payload = {
@@ -37,8 +43,10 @@ export class UsersService {
       id: user.id,
     };
 
+    const { password, ...result } = user;
+
     return {
-      user,
+      user: result,
       backendTokens: await this.generateBackendTokens(payload),
     };
   }
@@ -51,8 +59,12 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { id } });
   }
 
-  async findAll() {
-    return [];
+  async updateById(id: number) {
+    // const res = this.usersRepository.update({
+    //   where: {
+    //     id
+    //   }
+    // })
   }
 
   // Передислоцировать в auth(?)
@@ -75,3 +87,45 @@ export class UsersService {
     };
   }
 }
+
+// EXAMPLE
+// async create(createUserDto: CreateUserDto) {
+//   const result = this.dataSource.manager.transaction(
+//     async (entityManager: EntityManager) => {
+//       const saltRounds = 10;
+
+//       const isExist = await this.usersRepository.findOne({
+//         where: {
+//           email: createUserDto.email,
+//         },
+//       });
+
+//       if (isExist) throw new BadRequestException('This email already exist');
+
+//       // **
+//       const userLinks = new UserLinks();
+
+//       const user = new User();
+//       user.fullname = createUserDto.fullname;
+//       user.email = createUserDto.email;
+//       user.password = await bcrypt.hash(createUserDto.password, saltRounds);
+//       user.userLinks = userLinks;
+
+//       const res = await entityManager.save(user);
+
+//       const payload = {
+//         email: res.email,
+//         id: res.id,
+//       };
+
+//       const { password, ...result } = res;
+
+//       return {
+//         user: result,
+//         backendTokens: await this.generateBackendTokens(payload),
+//       };
+//     },
+//   );
+
+//   return result;
+// }

@@ -10,10 +10,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersService } from '../users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
+import { UserLinks } from '../users/entities/userLinks.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, UserLinks]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
