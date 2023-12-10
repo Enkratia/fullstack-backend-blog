@@ -35,7 +35,7 @@ export class UsersService {
       fullname: createUserDto.fullname,
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, saltRounds),
-      userLinks,
+      userLinks: userLinks,
     });
 
     const payload = {
@@ -52,11 +52,20 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    return await this.usersRepository.findOne({ where: { email } });
+    return await this.usersRepository.findOne({
+      where: { email },
+    });
   }
 
   async findById(id: number) {
-    return await this.usersRepository.findOne({ where: { id } });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) throw new BadRequestException('Cannot find user');
+
+    const { password, ...result } = user;
+    return result;
   }
 
   async updateById(id: number) {

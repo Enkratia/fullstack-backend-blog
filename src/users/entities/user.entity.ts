@@ -35,7 +35,10 @@ export class User {
   @Column({ default: '' })
   representation: string;
 
-  @OneToOne(() => UserLinks, (userLinks) => userLinks.user)
+  @OneToOne(() => UserLinks, (userLinks) => userLinks.user, {
+    cascade: true,
+    eager: true,
+  })
   @JoinColumn({ name: 'userLinks_id' })
   userLinks: Relation<UserLinks>;
 
