@@ -24,8 +24,8 @@ class UserLinksDto {
 }
 
 export class CreateUserDto {
-  @IsNumber()
-  id: number;
+  // @IsNumber()
+  // id: number;
 
   @IsEmail()
   email: string;
@@ -51,9 +51,9 @@ export class CreateUserDto {
   @Type(() => UserLinksDto)
   userLinks: UserLinksDto;
 
-  @IsDateString()
-  createdAt: Date;
+  // @IsDateString()
+  // createdAt: Date;
 
-  @IsDateString()
-  updatedAt: Date;
+  // @IsDateString()
+  // updatedAt: Date;
 }

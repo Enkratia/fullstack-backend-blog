@@ -12,7 +12,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async updateUser(@Body() @Param('id') id: number) {
-    return await this.usersService.updateById(id);
+  async updateUser(@Body() body, @Param('id') id: number) {
+    return await this.usersService.updateById(body, id);
   }
 }

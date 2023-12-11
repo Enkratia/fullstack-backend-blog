@@ -1,6 +1,10 @@
 import * as bcrypt from 'bcrypt';
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { DataSource, Repository } from 'typeorm';
@@ -68,12 +72,26 @@ export class UsersService {
     return result;
   }
 
-  async updateById(id: number) {
-    // const res = this.usersRepository.update({
-    //   where: {
-    //     id
-    //   }
-    // })
+  async updateById(body, id: number) {
+    // const res = await this.dataSource
+    //   .createQueryBuilder()
+    //   .relation(User, "userLinks")
+    //   .update(User)
+    //   .set(body)
+    //   .where('id = :id', { id })
+    //   .execute();
+    const transaction = await this.usersRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        userLinks: true,
+      },
+    });
+
+    if (!transaction) throw new NotFoundException('Transaction not found');
+
+    return await this.usersRepository.update(id, body);
   }
 
   // Передислоцировать в auth(?)
