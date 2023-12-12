@@ -1,9 +1,8 @@
 import { Type } from 'class-transformer';
 import {
-  IsDateString,
   IsEmail,
   IsNotEmpty,
-  IsNumber,
+  IsOptional,
   IsString,
   MinLength,
   ValidateNested,
@@ -23,18 +22,16 @@ class UserLinksDto {
   linkedin: string;
 }
 
-export class CreateUserDto {
-  // @IsNumber()
-  // id: number;
-
+export class UpdateUserDto {
   @IsEmail()
   email: string;
 
   @IsString()
   fullname: string;
 
+  @IsOptional()
   @IsString()
-  @MinLength(6, { message: 'Must be 6 symbols or more' })
+  @MinLength(6)
   password: string;
 
   @IsString()
@@ -50,10 +47,4 @@ export class CreateUserDto {
   @ValidateNested()
   @Type(() => UserLinksDto)
   userLinks: UserLinksDto;
-
-  // @IsDateString()
-  // createdAt: Date;
-
-  // @IsDateString()
-  // updatedAt: Date;
 }

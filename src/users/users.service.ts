@@ -12,20 +12,21 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLinks } from './entities/userLinks.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
+
+const saltRounds = 10;
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    // @InjectRepository(UserLinks)
-    // private userLinksRepository: Repository<UserLinks>,
+    @InjectRepository(UserLinks)
+    private userLinksRepository: Repository<UserLinks>,
     @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const saltRounds = 10;
-
     const isExist = await this.usersRepository.findOne({
       where: {
         email: createUserDto.email,
@@ -72,29 +73,32 @@ export class UsersService {
     return result;
   }
 
-  async updateById(body, id: number) {
-    // const res = await this.dataSource
-    //   .createQueryBuilder()
-    //   .relation(User, "userLinks")
-    //   .update(User)
-    //   .set(body)
-    //   .where('id = :id', { id })
-    //   .execute();
-    const transaction = await this.usersRepository.findOne({
-      where: {
-        id,
-      },
-      relations: {
-        userLinks: true,
-      },
+  async updateById(body: UpdateUserDto, id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
     });
 
-    if (!transaction) throw new NotFoundException('Transaction not found');
+    if (!user) throw new NotFoundException('Transaction not found');
 
-    return await this.usersRepository.update(id, body);
+    const { userLinks, ...rest } = body;
+
+    if (rest.password) {
+      rest.password = await bcrypt.hash(rest.password, saltRounds);
+    }
+
+    const userRes = await this.usersRepository.update({ id }, rest);
+
+    const userLinksRes = await this.userLinksRepository.update(
+      {
+        id: user.userLinks.id,
+      },
+      userLinks,
+    );
+
+    return userLinksRes;
   }
 
-  // Передислоцировать в auth(?)
+  // Перенести в auth(?)
   async generateBackendTokens(payload: { email: string; id: number }) {
     return {
       accessToken: await this.jwtService.signAsync(payload, {
@@ -115,7 +119,7 @@ export class UsersService {
   }
 }
 
-// EXAMPLE
+// EXAMPLE datasource
 // async create(createUserDto: CreateUserDto) {
 //   const result = this.dataSource.manager.transaction(
 //     async (entityManager: EntityManager) => {
