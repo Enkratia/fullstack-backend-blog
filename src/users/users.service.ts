@@ -86,26 +86,27 @@ export class UsersService {
     //   rest.password = await bcrypt.hash(rest.password, saltRounds);
     // }
 
-    const userData = {
-      fullname: body.fullname,
-      email: body.email,
-      company: body.company,
-      profession: body.profession,
-      representation: body.representation,
-      imageUrl: imageUrl,
-      password: body.password,
-    };
+    // **************************
 
-    userData.password ?? delete userData.password;
-    userData.imageUrl ?? delete userData.imageUrl;
+    // const userData = {
+    //   fullname: body.fullname,
+    //   email: body.email,
+    //   company: body.company,
+    //   profession: body.profession,
+    //   representation: body.representation,
+    //   imageUrl: imageUrl,
+    //   password: body.password,
+    // };
 
-    const userRes = await this.usersRepository.update({ id }, userData);
+    // userData.password ?? delete userData.password;
+    // userData.imageUrl ?? delete userData.imageUrl;
 
-    const user = new User();
-    user.fullname = createUserDto.fullname;
-    user.email = createUserDto.email;
-    user.password = await bcrypt.hash(createUserDto.password, saltRounds);
-    user.userLinks = userLinks;
+    // const userRes = await this.usersRepository.update({ id }, userData);
+
+    const test = new User();
+    test.fullname = body.fullname;
+    test.email = body.email;
+    test.password = await bcrypt.hash(body.password, saltRounds);
 
     // const userLinksRes = await this.userLinksRepository.update(
     //   {
