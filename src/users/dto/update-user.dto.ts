@@ -8,19 +8,19 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-class UserLinksDto {
-  @IsString()
-  facebook: string;
+// class UserLinksDto {
+//   @IsString()
+//   facebook: string;
 
-  @IsString()
-  twitter: string;
+//   @IsString()
+//   twitter: string;
 
-  @IsString()
-  instagram: string;
+//   @IsString()
+//   instagram: string;
 
-  @IsString()
-  linkedin: string;
-}
+//   @IsString()
+//   linkedin: string;
+// }
 
 export class UpdateUserDto {
   @IsEmail()
@@ -43,8 +43,21 @@ export class UpdateUserDto {
   @IsString()
   representation: string;
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => UserLinksDto)
-  userLinks: UserLinksDto;
+  // @IsNotEmpty()
+  // @ValidateNested()
+  // @Type(() => UserLinksDto)
+  // userLinks: UserLinksDto;
+
+  // **
+  @IsString()
+  facebook: string;
+
+  @IsString()
+  twitter: string;
+
+  @IsString()
+  instagram: string;
+
+  @IsString()
+  linkedin: string;
 }

@@ -73,29 +73,48 @@ export class UsersService {
     return result;
   }
 
-  async updateById(body: UpdateUserDto, id: number) {
+  async updateById(body: UpdateUserDto, imageUrl: string | null, id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
     });
 
     if (!user) throw new NotFoundException('Transaction not found');
 
-    const { userLinks, ...rest } = body;
+    // const { userLinks, ...rest } = body;
 
-    if (rest.password) {
-      rest.password = await bcrypt.hash(rest.password, saltRounds);
-    }
+    // if (rest.password) {
+    //   rest.password = await bcrypt.hash(rest.password, saltRounds);
+    // }
 
-    const userRes = await this.usersRepository.update({ id }, rest);
+    const userData = {
+      fullname: body.fullname,
+      email: body.email,
+      company: body.company,
+      profession: body.profession,
+      representation: body.representation,
+      imageUrl: imageUrl,
+      password: body.password,
+    };
 
-    const userLinksRes = await this.userLinksRepository.update(
-      {
-        id: user.userLinks.id,
-      },
-      userLinks,
-    );
+    userData.password ?? delete userData.password;
+    userData.imageUrl ?? delete userData.imageUrl;
 
-    return userLinksRes;
+    const userRes = await this.usersRepository.update({ id }, userData);
+
+    const user = new User();
+    user.fullname = createUserDto.fullname;
+    user.email = createUserDto.email;
+    user.password = await bcrypt.hash(createUserDto.password, saltRounds);
+    user.userLinks = userLinks;
+
+    // const userLinksRes = await this.userLinksRepository.update(
+    //   {
+    //     id: user.userLinks.id,
+    //   },
+    //   userLinks,
+    // );
+
+    // return userLinksRes;
   }
 
   // Перенести в auth(?)

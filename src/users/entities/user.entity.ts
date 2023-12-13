@@ -25,6 +25,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column()
+  imageUrl: string;
+
   // **
   @Column({ default: '' })
   profession: string;
