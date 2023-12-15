@@ -1,26 +1,4 @@
-import { Type } from 'class-transformer';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
-
-// class UserLinksDto {
-//   @IsString()
-//   facebook: string;
-
-//   @IsString()
-//   twitter: string;
-
-//   @IsString()
-//   instagram: string;
-
-//   @IsString()
-//   linkedin: string;
-// }
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class UpdateUserDto {
   @IsEmail()
@@ -42,11 +20,6 @@ export class UpdateUserDto {
 
   @IsString()
   representation: string;
-
-  // @IsNotEmpty()
-  // @ValidateNested()
-  // @Type(() => UserLinksDto)
-  // userLinks: UserLinksDto;
 
   // **
   @IsString()

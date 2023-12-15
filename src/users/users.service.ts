@@ -20,8 +20,8 @@ const saltRounds = 10;
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(UserLinks)
-    private userLinksRepository: Repository<UserLinks>,
+    // @InjectRepository(UserLinks)
+    // private userLinksRepository: Repository<UserLinks>,
     @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
@@ -74,48 +74,44 @@ export class UsersService {
   }
 
   async updateById(body: UpdateUserDto, imageUrl: string | null, id: number) {
-    const user = await this.usersRepository.findOne({
+    const res = await this.usersRepository.findOne({
       where: { id },
     });
 
-    if (!user) throw new NotFoundException('Transaction not found');
+    if (!res) throw new NotFoundException('Transaction not found');
 
-    // const { userLinks, ...rest } = body;
+    // **
+    const user = new User();
+    user.fullname = body.fullname;
+    user.email = body.email;
+    user.company = body.company;
+    user.profession = body.profession;
+    user.representation = body.representation;
 
-    // if (rest.password) {
-    //   rest.password = await bcrypt.hash(rest.password, saltRounds);
-    // }
+    if (imageUrl) {
+      user.imageUrl = imageUrl;
+    }
 
-    // **************************
+    if (body.password) {
+      user.password = await bcrypt.hash(body.password, saltRounds);
+    }
 
-    // const userData = {
-    //   fullname: body.fullname,
-    //   email: body.email,
-    //   company: body.company,
-    //   profession: body.profession,
-    //   representation: body.representation,
-    //   imageUrl: imageUrl,
-    //   password: body.password,
-    // };
+    await this.dataSource.manager.update(User, { id }, user);
 
-    // userData.password ?? delete userData.password;
-    // userData.imageUrl ?? delete userData.imageUrl;
+    // **
+    const userLinks = new UserLinks();
+    userLinks.facebook = body.facebook;
+    userLinks.twitter = body.twitter;
+    userLinks.instagram = body.instagram;
+    userLinks.linkedin = body.linkedin;
 
-    // const userRes = await this.usersRepository.update({ id }, userData);
+    const userLinksRes = await this.dataSource.manager.update(
+      UserLinks,
+      res.userLinks.id,
+      userLinks,
+    );
 
-    const test = new User();
-    test.fullname = body.fullname;
-    test.email = body.email;
-    test.password = await bcrypt.hash(body.password, saltRounds);
-
-    // const userLinksRes = await this.userLinksRepository.update(
-    //   {
-    //     id: user.userLinks.id,
-    //   },
-    //   userLinks,
-    // );
-
-    // return userLinksRes;
+    return userLinksRes;
   }
 
   // Перенести в auth(?)
@@ -129,12 +125,8 @@ export class UsersService {
         expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME,
         secret: process.env.JWT_REFRESH_TOKEN_KEY,
       }),
-      expiresIn: new Date().setTime(
-        new Date().getTime() + +process.env.JWT_ACCESS_EXPIRE_TIME,
-      ),
-      refreshExpiresIn: new Date().setTime(
-        new Date().getTime() + +process.env.JWT_REFRESH_EXPIRE_TIME,
-      ),
+      expiresIn: Date.now() + +process.env.JWT_ACCESS_EXPIRE_TIME,
+      refreshExpiresIn: Date.now() + +process.env.JWT_REFRESH_EXPIRE_TIME,
     };
   }
 }
