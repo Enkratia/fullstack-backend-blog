@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { DataSource, Repository } from 'typeorm';
 
 import { User } from './entities/user.entity';
+import { Post } from '../posts/entities/post.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,12 +36,15 @@ export class UsersService {
 
     if (isExist) throw new BadRequestException('This email already exist');
 
+    // const post = new Post();
+
     const userLinks = new UserLinks();
     const user = await this.usersRepository.save({
       fullname: createUserDto.fullname,
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, saltRounds),
       userLinks: userLinks,
+      posts: [],
     });
 
     const payload = {
@@ -65,6 +69,9 @@ export class UsersService {
   async findById(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id },
+      relations: {
+        userLinks: true,
+      },
     });
 
     if (!user) throw new BadRequestException('Cannot find user');
@@ -76,6 +83,9 @@ export class UsersService {
   async updateById(body: UpdateUserDto, imageUrl: string | null, id: number) {
     const res = await this.usersRepository.findOne({
       where: { id },
+      relations: {
+        userLinks: true,
+      },
     });
 
     if (!res) throw new NotFoundException('Transaction not found');

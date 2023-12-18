@@ -8,10 +8,13 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -21,16 +24,16 @@ import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post(':id')
+  @UseGuards(JwtAuthGuard)
+  @Post()
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async createPost(
     @UploadedFile(SharpPipe)
     imageUrl: string | null,
     @Body() dto: CreatePostDto,
-    @Param('id') id: number,
+    @Req() req,
   ) {
-    console.log('hello');
-    return await this.postsService.create(dto, id, imageUrl);
+    return await this.postsService.create(dto, +req.user.id, imageUrl);
   }
 
   // @Get()
@@ -38,15 +41,22 @@ export class PostsController {
   //   return this.postsService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.postsService.findOne(+id);
-  // }
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return await this.postsService.findOne(id);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-  //   return this.postsService.update(+id, updatePostDto);
-  // }
+  // @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  update(
+    @UploadedFile(SharpPipe)
+    imageUrl: string | null,
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdatePostDto,
+  ) {
+    return this.postsService.update(id, updateUserDto, imageUrl);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

@@ -2,9 +2,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { User } from '../../users/entities/user.entity';
+import { Tag } from './tag.entity';
 
 @Entity()
 export class Post {
@@ -23,12 +31,17 @@ export class Post {
   @Column({ default: '' })
   imageUrl: string;
 
-  // tags: string[];
-  // user: UserType;
+  @ManyToOne(() => User, (user) => user.posts)
+  user: Relation<User>;
+
+  @ManyToMany(() => Tag, (tag) => tag.posts, { cascade: true })
+  @JoinTable()
+  tags: Relation<Tag[]>;
 
   @Column({ default: false })
   isFeatured: boolean;
 
+  // **
   @CreateDateColumn()
   createdAt: string;
 

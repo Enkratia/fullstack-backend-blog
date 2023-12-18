@@ -7,9 +7,12 @@ import {
   OneToOne,
   JoinColumn,
   Relation,
+  OneToMany,
+  JoinTable,
 } from 'typeorm';
 
 import { UserLinks } from './userLinks.entity';
+import { Post } from '../../posts/entities/post.entity';
 
 @Entity()
 export class User {
@@ -38,13 +41,21 @@ export class User {
   @Column({ default: '' })
   representation: string;
 
+  // **
   @OneToOne(() => UserLinks, (userLinks) => userLinks.user, {
     cascade: true,
-    eager: true,
   })
   @JoinColumn({ name: 'userLinks_id' })
   userLinks: Relation<UserLinks>;
 
+  // **
+  @OneToMany(() => Post, (post) => post.user, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'posts_id' })
+  posts: Relation<Post[]>;
+
+  // **
   @CreateDateColumn()
   createdAt: Date;
 
