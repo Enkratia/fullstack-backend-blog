@@ -51,6 +51,8 @@ export class User {
   // **
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
+    orphanedRowAction: 'delete',
+    nullable: true,
   })
   @JoinColumn({ name: 'posts_id' })
   posts: Relation<Post[]>;

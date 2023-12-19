@@ -69,9 +69,14 @@ export class PostsService {
     // post.content = updatePostDto.content;
 
     const post = new Post();
+    post.id = id;
     post.title = updatePostDto.title;
     post.category = updatePostDto.category;
     post.content = updatePostDto.content;
+
+    if (imageUrl) {
+      post.imageUrl = imageUrl;
+    }
 
     const tags = updatePostDto.tags.split(',').map((tag) => {
       const tagEntity = new Tag();
@@ -79,24 +84,35 @@ export class PostsService {
       return tagEntity;
     });
 
+    // **
+    await this.dataSource.manager.preload(Post, post);
     post.tags = tags;
+    const save = await this.dataSource.manager.save(Post, post);
+    return save;
 
-    if (imageUrl) {
-      post.imageUrl = imageUrl;
-    }
+    // const actualRelationships = await this.dataSource
+    //   .getRepository(Post)
+    //   .createQueryBuilder()
+    //   .relation(Post, 'tags')
+    //   .of(id)
+    //   .loadMany();
 
-    await this.dataSource.manager.update(Post, { id }, post);
+    // const res = await this.dataSource
+    //   .getRepository(Post)
+    //   .createQueryBuilder()
+    //   .relation(Post, 'tags')
+    //   .of(id)
+    //   .add(tags);
 
-    // const user = await this.userRepository.findOne({
-    //   where: { id: post.user.id },
-    //   relations: { posts: true },
-    // });
+    // console.log('actualRelationships', actualRelationships);
+    // console.log('tags', tags);
 
-    // const postRes = await this.postRepository.save(post);
-    // user.posts.push(postRes);
-    // const userRes = await this.userRepository.save(user);
-
-    // return userRes;
+    // return await this.dataSource.manager
+    //   .getRepository(Post)
+    //   .createQueryBuilder()
+    //   .relation(Post, 'tags')
+    //   .of(id)
+    //   .add(tags);
   }
 
   // findAll() {

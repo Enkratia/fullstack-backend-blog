@@ -34,7 +34,10 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  @ManyToMany(() => Tag, (tag) => tag.posts, { cascade: true })
+  @ManyToMany(() => Tag, (tag) => tag.posts, {
+    cascade: true,
+    orphanedRowAction: 'delete',
+  })
   @JoinTable()
   tags: Relation<Tag[]>;
 
