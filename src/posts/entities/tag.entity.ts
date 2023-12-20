@@ -1,8 +1,10 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
   Relation,
@@ -18,6 +20,13 @@ export class Tag {
   @PrimaryColumn()
   tag: string;
 
-  @ManyToMany(() => Post, (post) => post.tags, { orphanedRowAction: 'delete' })
+  @ManyToMany(() => Post, (post) => post.tags, {
+    orphanedRowAction: 'delete',
+  })
   posts: Relation<Post[]>;
+
+  // @ManyToOne(() => Post, (post) => post.tags, {
+  //   orphanedRowAction: 'delete',
+  // })
+  // posts: Relation<Post>;
 }

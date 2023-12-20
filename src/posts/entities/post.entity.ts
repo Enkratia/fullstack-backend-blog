@@ -1,4 +1,7 @@
 import {
+  AfterLoad,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -6,6 +9,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -34,12 +38,25 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  @ManyToMany(() => Tag, (tag) => tag.posts, {
-    cascade: true,
-    orphanedRowAction: 'delete',
+  @ManyToMany(() => Tag, (tag) => tag.posts, { cascade: true })
+  @JoinTable({
+    // name: 'posts_tags', // table name for the junction table of this relation
+    joinColumn: {
+      name: 'post_id',
+      // referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tag_id',
+      // referencedColumnName: 'tag',
+    },
   })
-  @JoinTable()
   tags: Relation<Tag[]>;
+
+  // @OneToMany(() => Tag, (tag) => tag.posts, {
+  //   cascade: true,
+  // })
+  // @JoinColumn({ name: 'tags_id' })
+  // tags: Relation<Tag[]>;
 
   @Column({ default: false })
   isFeatured: boolean;
@@ -50,4 +67,19 @@ export class Post {
 
   @UpdateDateColumn()
   updatedAt: string;
+
+  // @BeforeInsert()
+  // beforeinsert() {
+  //   console.log('beforeinsert');
+  // }
+
+  // @BeforeUpdate()
+  // beforeupdate() {
+  //   console.log('beforeupdate');
+  // }
+
+  // @AfterLoad()
+  // afterLoad() {
+  //   console.log('afterLoad');
+  // }
 }

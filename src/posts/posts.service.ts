@@ -21,10 +21,10 @@ export class PostsService {
     id: number,
     imageUrl: string | null,
   ) {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: { posts: true },
-    });
+    // const user = await this.userRepository.findOne({
+    //   where: { id },
+    //   relations: { posts: true },
+    // });
 
     const post = new Post();
     post.title = createPostDto.title;
@@ -43,11 +43,7 @@ export class PostsService {
       post.imageUrl = imageUrl;
     }
 
-    const postRes = await this.postRepository.save(post);
-    user.posts.push(postRes);
-    const userRes = await this.userRepository.save(user);
-
-    return userRes;
+    return await this.postRepository.save(post);
   }
 
   async update(
@@ -55,28 +51,15 @@ export class PostsService {
     updatePostDto: UpdatePostDto,
     imageUrl: string | null,
   ) {
-    // const post = await this.postRepository.findOne({
-    //   where: { id },
-    //   relations: {
-    //     user: true,
-    //   },
-    // });
-
-    // if (!post) throw new BadRequestException();
-
-    // post.title = updatePostDto.title;
-    // post.category = updatePostDto.category;
-    // post.content = updatePostDto.content;
-
     const post = new Post();
     post.id = id;
     post.title = updatePostDto.title;
     post.category = updatePostDto.category;
     post.content = updatePostDto.content;
 
-    if (imageUrl) {
-      post.imageUrl = imageUrl;
-    }
+    // if (imageUrl) {
+    //   post.imageUrl = imageUrl;
+    // }
 
     const tags = updatePostDto.tags.split(',').map((tag) => {
       const tagEntity = new Tag();
@@ -84,35 +67,34 @@ export class PostsService {
       return tagEntity;
     });
 
-    // **
-    await this.dataSource.manager.preload(Post, post);
-    post.tags = tags;
-    const save = await this.dataSource.manager.save(Post, post);
-    return save;
+    const oldTags = await this.dataSource
+      .createQueryBuilder()
+      .relation(Post, 'tags')
+      .of(id)
+      .loadMany();
 
-    // const actualRelationships = await this.dataSource
-    //   .getRepository(Post)
+    const test = await this.dataSource.manager.save(Tag, tags);
+    post.tags = test;
+
+    const res = await this.dataSource.manager.save(post);
+
+    const removedOldTags = await this.dataSource
+      .createQueryBuilder()
+      .delete()
+      .from(Tag)
+      .where('tag.tag_id = :postId', { postId: null })
+      .execute();
+
+    return res;
+
+    // const test = await this.dataSource
+    //   .getRepository(Tag)
     //   .createQueryBuilder()
-    //   .relation(Post, 'tags')
-    //   .of(id)
-    //   .loadMany();
+    //   .select('tag')
+    //   .distinct(true)
+    //   .getMany();
 
-    // const res = await this.dataSource
-    //   .getRepository(Post)
-    //   .createQueryBuilder()
-    //   .relation(Post, 'tags')
-    //   .of(id)
-    //   .add(tags);
-
-    // console.log('actualRelationships', actualRelationships);
-    // console.log('tags', tags);
-
-    // return await this.dataSource.manager
-    //   .getRepository(Post)
-    //   .createQueryBuilder()
-    //   .relation(Post, 'tags')
-    //   .of(id)
-    //   .add(tags);
+    // console.log(test);
   }
 
   // findAll() {
@@ -123,7 +105,7 @@ export class PostsService {
     return await this.postRepository.findOne({
       where: { id },
       relations: {
-        user: true,
+        // user: true,
         tags: true,
       },
     });

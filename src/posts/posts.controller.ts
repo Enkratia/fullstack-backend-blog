@@ -55,7 +55,6 @@ export class PostsController {
     @Param('id') id: number,
     @Body() updateUserDto: UpdatePostDto,
   ) {
-    // console.log(console.log('hello'));
     return this.postsService.update(id, updateUserDto, imageUrl);
   }
 
