@@ -31,6 +31,6 @@ export class SharpPipe
         .toFile(path.join('images', filename));
     }
 
-    return filename;
+    return process.env.BACKEND_URL + '/images/' + filename;
   }
 }

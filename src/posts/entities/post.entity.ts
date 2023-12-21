@@ -16,7 +16,6 @@ import {
 } from 'typeorm';
 
 import { User } from '../../users/entities/user.entity';
-import { Tag } from './tag.entity';
 
 @Entity()
 export class Post {
@@ -38,25 +37,8 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  @ManyToMany(() => Tag, (tag) => tag.posts, { cascade: true })
-  @JoinTable({
-    // name: 'posts_tags', // table name for the junction table of this relation
-    joinColumn: {
-      name: 'post_id',
-      // referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'tag_id',
-      // referencedColumnName: 'tag',
-    },
-  })
-  tags: Relation<Tag[]>;
-
-  // @OneToMany(() => Tag, (tag) => tag.posts, {
-  //   cascade: true,
-  // })
-  // @JoinColumn({ name: 'tags_id' })
-  // tags: Relation<Tag[]>;
+  @Column()
+  tags: string;
 
   @Column({ default: false })
   isFeatured: boolean;
@@ -67,19 +49,15 @@ export class Post {
 
   @UpdateDateColumn()
   updatedAt: string;
-
-  // @BeforeInsert()
-  // beforeinsert() {
-  //   console.log('beforeinsert');
-  // }
-
-  // @BeforeUpdate()
-  // beforeupdate() {
-  //   console.log('beforeupdate');
-  // }
-
-  // @AfterLoad()
-  // afterLoad() {
-  //   console.log('afterLoad');
-  // }
 }
+
+// @ManyToMany(() => Tag, (tag) => tag.posts, { cascade: true })
+// @JoinTable({
+//   joinColumn: {
+//     name: 'post_id',
+//   },
+//   inverseJoinColumn: {
+//     name: 'tag_id',
+//   },
+// })
+// tags: Relation<Tag[]>;

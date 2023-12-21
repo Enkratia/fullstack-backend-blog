@@ -33,13 +33,9 @@ export class PostsController {
     @Body() dto: CreatePostDto,
     @Req() req,
   ) {
+    console.log(imageUrl);
     return await this.postsService.create(dto, +req.user.id, imageUrl);
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.postsService.findAll();
-  // }
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -57,9 +53,4 @@ export class PostsController {
   ) {
     return this.postsService.update(id, updateUserDto, imageUrl);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.postsService.remove(+id);
-  // }
 }

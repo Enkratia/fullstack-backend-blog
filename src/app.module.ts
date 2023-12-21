@@ -39,6 +39,7 @@ import { PostsModule } from './posts/posts.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.js, .ts}'],
+        subscribers: [__dirname + '/**/*.subscriber{.js, .ts}'],
         synchronize: true, // ИЗМЕНИТЬ
       }),
       inject: [ConfigService],

@@ -10,6 +10,7 @@ import {
   OneToMany,
   JoinTable,
   BeforeUpdate,
+  AfterLoad,
 } from 'typeorm';
 
 import { UserLinks } from './userLinks.entity';
@@ -32,7 +33,6 @@ export class User {
   @Column({ default: '' })
   imageUrl: string;
 
-  // **
   @Column({ default: '' })
   profession: string;
 
@@ -42,21 +42,18 @@ export class User {
   @Column({ default: '' })
   representation: string;
 
-  // **
   @OneToOne(() => UserLinks, (userLinks) => userLinks.user, {
     cascade: true,
   })
   @JoinColumn({ name: 'userLinks_id' })
   userLinks: Relation<UserLinks>;
 
-  // **
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })
   @JoinColumn({ name: 'posts_id' })
   posts: Relation<Post[]>;
 
-  // **
   @CreateDateColumn()
   createdAt: Date;
 
