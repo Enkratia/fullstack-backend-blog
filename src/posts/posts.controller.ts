@@ -10,6 +10,7 @@ import {
   UploadedFile,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -33,13 +34,17 @@ export class PostsController {
     @Body() dto: CreatePostDto,
     @Req() req,
   ) {
-    console.log(imageUrl);
     return await this.postsService.create(dto, +req.user.id, imageUrl);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findPost(@Param('id') id: number) {
     return await this.postsService.findOne(id);
+  }
+
+  @Get()
+  async findPosts(@Query() query) {
+    return await this.postsService.findMany(query);
   }
 
   // @UseGuards(JwtAuthGuard)

@@ -13,7 +13,7 @@ export class PostsService {
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectDataSource() private dataSource: DataSource,
+    // @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   async create(
@@ -42,7 +42,7 @@ export class PostsService {
     user.posts.push(postRes);
     const userRes = await this.userRepository.save(user);
 
-    return userRes;
+    return postRes;
   }
 
   async update(
@@ -72,54 +72,53 @@ export class PostsService {
       },
     });
   }
+
+  async findMany(query) {
+    // console.log(query);
+
+    const qb = this.postRepository.createQueryBuilder('p');
+
+    qb.leftJoinAndSelect('p.user', 'user');
+
+    // qb.limit(dto.limit || 0);
+    // qb.take(dto.take || 10);
+
+    // const names = [{ id: 5 }, { title: 'title' }, { isFeautured: false }];
+
+    // Operators
+
+    const oRaw = {};
+
+    for (let key in query) {
+      if (key.match(/_(lt|gt|lik|n)e$/)) {
+        oRaw[key] = query[key];
+      }
+    }
+
+    // Filters (+SQLI defence)
+    // const fRaw = {};
+
+    // for (let key in query) {
+    //   if (key.startsWith('_')) continue;
+    //   fRaw[key] = query[key];
+    // }
+
+    // const f = Object.entries(fRaw);
+
+    // for (let i = 0; i < f.length; i++) {
+    //   let keyMedium = '';
+    //   let mediumValue = {};
+
+    //   const key = 'p.' + f[i][0];
+    //   const value = f[i][1];
+
+    //   keyMedium = `${key} = :${key + i}`;
+    //   mediumValue[`${key + i}`] = value;
+
+    //   qb.andWhere(keyMedium, mediumValue);
+    // }
+
+    // const posts = await qb.getMany();
+    // return posts;
+  }
 }
-
-// ***
-// const user = await this.userRepository.findOne({
-//   where: { id },
-//   relations: { posts: true },
-// });
-// const tags = createPostDto.tags.split(',').map((tag) => {
-//   const tagEntity = new Tag();
-//   tagEntity.tag = tag.trim();
-//   return tagEntity;
-// });
-
-// post.tags = tags;
-
-// const removedOldTags = await this.dataSource
-//   .createQueryBuilder()
-//   .delete()
-//   .from(Tag)
-//   .where('tag.tag_id = :postId', { postId: null })
-//   .execute();
-
-// return res;
-
-// const test = await this.dataSource
-//   .getRepository(Tag)
-//   .createQueryBuilder()
-//   .select('tag')
-//   .distinct(true)
-//   .getMany();
-
-// console.log(test);
-
-// if (imageUrl) {
-//   post.imageUrl = imageUrl;
-// }
-
-// const tags = updatePostDto.tags.split(',').map((tag) => {
-//   const tagEntity = new Tag();
-//   tagEntity.tag = tag.trim();
-//   return tagEntity;
-// });
-
-// const oldTags = await this.dataSource
-//   .createQueryBuilder()
-//   .relation(Post, 'tags')
-//   .of(id)
-//   .loadMany();
-
-// const test = await this.dataSource.manager.save(Tag, tags);
-// post.tags = tags;
