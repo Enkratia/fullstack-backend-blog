@@ -8,7 +8,10 @@ export class CreatePostDto {
   category: string;
 
   @IsString()
-  content: string;
+  contentText: string;
+
+  @IsString()
+  contentJson: string;
 
   @IsString()
   tags: string;

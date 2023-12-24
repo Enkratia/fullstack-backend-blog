@@ -39,7 +39,8 @@ export class PostsService {
     const post = new Post();
     post.title = createPostDto.title;
     post.category = createPostDto.category;
-    post.content = createPostDto.content;
+    post.contentJson = createPostDto.contentJson;
+    post.contentText = createPostDto.contentText;
     post.tags = createPostDto.tags;
 
     if (imageUrl) {
@@ -62,7 +63,8 @@ export class PostsService {
     post.id = id;
     post.title = updatePostDto.title;
     post.category = updatePostDto.category;
-    post.content = updatePostDto.content;
+    post.contentJson = updatePostDto.contentJson;
+    post.contentText = updatePostDto.contentText;
     post.tags = updatePostDto.tags;
 
     if (imageUrl) {
@@ -82,49 +84,171 @@ export class PostsService {
   }
 
   async findMany(query) {
-    const qb = this.postRepository.createQueryBuilder('b');
-    qb.leftJoinAndSelect('b.user', 'user');
-    // qb.leftJoinAndSelect('b.user.userLinks', 'userLinks');
+    // СДЕЛАТЬ ВСЕМ РАЗНЫЙ ИНДЕКС РАЗЛИЧИЯ
+    const qb = this.postRepository.createQueryBuilder('p');
+    qb.leftJoinAndSelect('p.user', 'user');
 
-    console.log(query);
-    for (let key in query) {
-      if (key.includes('.')) {
-        const d = key.split('.').pop();
-        console.log(d);
+    // Full-text search
+    if (query._q) {
+      const formattedSearchPre = query._q.replace(/[^\p{L}\p{N}]/giu, ' ');
+      const formattedSearch = formattedSearchPre.trim().replace(/\s+/g, ' & ');
+
+      if (formattedSearch) {
+        qb.orWhere(
+          `to_tsvector('english', p.category) @@ to_tsquery('english', :formattedSearch)`,
+          { formattedSearch: `${formattedSearch}:*` },
+        );
+
+        qb.orWhere(
+          `to_tsvector('english', p.title) @@ to_tsquery('english', :formattedSearch)`,
+          {
+            formattedSearch: `${formattedSearch}:*`,
+          },
+        );
+
+        qb.orWhere(
+          `to_tsvector('english', p.tags) @@ to_tsquery('english', :formattedSearch)`,
+          {
+            formattedSearch: `${formattedSearch}:*`,
+          },
+        );
+
+        qb.orWhere(
+          `to_tsvector('english', p.contentText) @@ to_tsquery('english', :formattedSearch)`,
+          {
+            formattedSearch: `${formattedSearch}:*`,
+          },
+        );
+
+        qb.orWhere(
+          `to_tsvector('english', user.fullname) @@ to_tsquery('english', :formattedSearch)`,
+          {
+            formattedSearch: `${formattedSearch}:*`,
+          },
+        );
       }
     }
 
-    // Operators
-    const lteRaw = {};
+    // Sort
+    if (query._sort) {
+      const order = query._order !== 'DESC' ? 'ASC' : 'DESC';
+
+      qb.orderBy('');
+    }
+
+    // OPERATORS
+    // NE
+    const ne = [];
 
     for (let key in query) {
-      if (!key.endsWith('_lte')) return;
+      if (!key.endsWith('_ne')) continue;
+      ne.push([key.slice(0, -3), query[key]]);
 
-      lteRaw[key] = query[key];
       delete query[key];
     }
 
-    const lte = Object.entries(lteRaw);
+    for (let i = 0; i < ne.length; i++) {
+      let keyMedium = '';
+      let mediumValue = {};
 
-    // Filters (+SQLI protection)
-    const fRaw = {};
+      const key = ne[i][0].includes('.') ? ne[i][0] : 'p.' + ne[i][0];
+      const value = ne[i][1];
+
+      keyMedium = `${key} != :${key + i}`;
+      mediumValue[`${key + i}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+    }
+
+    // LTE
+    const lte = [];
+
+    for (let key in query) {
+      if (!key.endsWith('_lte')) continue;
+      lte.push([key.slice(0, -4), query[key]]);
+
+      delete query[key];
+    }
+
+    for (let i = 0; i < lte.length; i++) {
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = lte[i][0].includes('.') ? lte[i][0] : 'p.' + lte[i][0];
+      const value = lte[i][1];
+
+      keyMedium = `${key} <= :${key + i}`;
+      mediumValue[`${key + i}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+    }
+
+    // MTE
+    const mte = [];
+
+    for (let key in query) {
+      if (!key.endsWith('_mte')) continue;
+      mte.push([key.slice(0, -4), query[key]]);
+
+      delete query[key];
+    }
+
+    for (let i = 0; i < mte.length; i++) {
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = mte[i][0].includes('.') ? mte[i][0] : 'p.' + mte[i][0];
+      const value = mte[i][1];
+
+      keyMedium = `${key} >= :${key + i}`;
+      mediumValue[`${key + i}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+    }
+
+    // LIKE
+    const like = [];
+
+    for (let key in query) {
+      if (!key.endsWith('_like')) continue;
+      like.push([key.slice(0, -5), query[key]]);
+
+      delete query[key];
+    }
+
+    for (let i = 0; i < like.length; i++) {
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = like[i][0].includes('.') ? like[i][0] : 'p.' + like[i][0];
+      const value = like[i][1];
+
+      keyMedium = `${key} like :${key + i}`;
+      mediumValue[`${key + i}`] = `%${value}%`;
+
+      qb.andWhere(keyMedium, mediumValue);
+    }
+
+    // Filters
+    const f = [];
 
     for (let key in query) {
       if (key.startsWith('_')) continue;
-      fRaw[key] = query[key];
+      f.push([key, query[key]]);
     }
-
-    const f = Object.entries(fRaw);
 
     for (let i = 0; i < f.length; i++) {
       let keyMedium = '';
       let mediumValue = {};
 
-      const key = f[i][0].includes('.') ? f[i][0] : 'b.' + f[i][0];
+      const key = f[i][0].includes('.') ? f[i][0] : 'p.' + f[i][0];
       const value = f[i][1];
 
       keyMedium = `${key} = :${key + i}`;
       mediumValue[`${key + i}`] = value;
+
+      // console.log('keyMedium', keyMedium);
+      // console.log('mediumValue', mediumValue);
 
       qb.andWhere(keyMedium, mediumValue);
     }
@@ -157,20 +281,20 @@ export class PostsService {
 
     // OPERATORS
     // LIKE
-    for (let key in query) {
-      if (!key.endsWith('_like')) continue;
+    // for (let key in query) {
+    //   if (!key.endsWith('_like')) continue;
 
-      const likeKey = key.slice(0, -5);
-      const likeValue = Like(`%${query[key]}%`);
+    //   const likeKey = key.slice(0, -5);
+    //   const likeValue = Like(`%${query[key]}%`);
 
-      if (key.includes('.')) {
-        nestizy(likeKey, likeValue);
-      } else {
-        where[likeKey] = likeValue;
-      }
+    //   if (key.includes('.')) {
+    //     nestizy(likeKey, likeValue);
+    //   } else {
+    //     where[likeKey] = likeValue;
+    //   }
 
-      delete query[key];
-    }
+    //   delete query[key];
+    // }
 
     // LTE
     for (let key in query) {
@@ -260,3 +384,8 @@ export class PostsService {
     // }
   }
 }
+
+// =================
+// .replace(/[^а-яА-ЯёЁ0-9]/g, ' ') // RU lang
+// to_tsquery('simple', :formattedSearch) // 'simple' as an option
+// const formattedSearch = query._q.trim().replace(/ /g, ' & '); // one of the examples how to format search query

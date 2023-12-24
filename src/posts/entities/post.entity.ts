@@ -29,7 +29,10 @@ export class Post {
   category: string;
 
   @Column()
-  content: string;
+  contentText: string;
+
+  @Column()
+  contentJson: string;
 
   @Column({ default: '' })
   imageUrl: string;
