@@ -40,8 +40,9 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  @Column()
-  tags: string;
+  // @Column('text', { array: true, default: {} })
+  @Column('simple-array')
+  tags: string[];
 
   @Column({ default: false })
   isFeatured: boolean;

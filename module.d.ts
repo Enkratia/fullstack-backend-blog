@@ -10,6 +10,8 @@ declare namespace NodeJS {
     // JWT
     JWT_SECRET_KEY: string;
     JWT_REFRESH_TOKEN_KEY: string;
-    // JWT_EXPIRES: String;
   }
 }
+
+// Common
+type QueryType = Record<string, any>;

@@ -31,7 +31,7 @@ export class PostsService {
     post.category = createPostDto.category;
     post.contentJson = createPostDto.contentJson;
     post.contentText = createPostDto.contentText;
-    post.tags = createPostDto.tags;
+    post.tags = createPostDto.tags.split(',').map((tag) => tag.trim());
 
     if (imageUrl) {
       post.imageUrl = imageUrl;
@@ -55,7 +55,7 @@ export class PostsService {
     post.category = updatePostDto.category;
     post.contentJson = updatePostDto.contentJson;
     post.contentText = updatePostDto.contentText;
-    post.tags = updatePostDto.tags;
+    post.tags = updatePostDto.tags.split(',').map((tag) => tag.trim());
 
     if (imageUrl) {
       post.imageUrl = imageUrl;
@@ -73,8 +73,11 @@ export class PostsService {
     });
   }
 
-  async findMany(query) {
-    let idx = 0;
+  async findMany(query: QueryType) {
+    // WHITEWASH
+    for (let q in query) {
+      if (q.includes(' ')) delete query[q];
+    }
 
     const qb = this.postRepository.createQueryBuilder('p');
     qb.leftJoinAndSelect('p.user', 'user');
@@ -146,16 +149,15 @@ export class PostsService {
     // NE
     for (let q in query) {
       if (!q.endsWith('_ne')) continue;
-      idx++;
 
       let keyMedium = '';
       let mediumValue = {};
 
       const key = (q.includes('.') ? q : 'p.' + q).slice(0, -3);
-      const value = query[q];
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
 
-      keyMedium = `${key} != :${key + idx}`;
-      mediumValue[`${key + idx}`] = value;
+      keyMedium = `${key} NOT IN (:...${q})`;
+      mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
       delete query[key];
@@ -164,7 +166,6 @@ export class PostsService {
     // LTE
     for (let q in query) {
       if (!q.endsWith('_lte')) continue;
-      idx++;
 
       let keyMedium = '';
       let mediumValue = {};
@@ -172,8 +173,8 @@ export class PostsService {
       const key = (q.includes('.') ? q : 'p.' + q).slice(0, -4);
       const value = query[q];
 
-      keyMedium = `${key} <= :${key + idx}`;
-      mediumValue[`${key + idx}`] = value;
+      keyMedium = `${key} <= :${q}`;
+      mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
       delete query[key];
@@ -182,7 +183,6 @@ export class PostsService {
     // MTE
     for (let q in query) {
       if (!q.endsWith('_mte')) continue;
-      idx++;
 
       let keyMedium = '';
       let mediumValue = {};
@@ -190,8 +190,8 @@ export class PostsService {
       const key = (q.includes('.') ? q : 'p.' + q).slice(0, -4);
       const value = query[q];
 
-      keyMedium = `${key} >= :${key + idx}`;
-      mediumValue[`${key + idx}`] = value;
+      keyMedium = `${key} >= :${q}`;
+      mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
       delete query[key];
@@ -200,16 +200,15 @@ export class PostsService {
     // LIKE
     for (let q in query) {
       if (!q.endsWith('_like')) continue;
-      idx++;
 
       let keyMedium = '';
       let mediumValue = {};
 
       const key = (q.includes('.') ? q : 'p.' + q).slice(0, -5);
-      const value = query[q];
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
 
-      keyMedium = `${key} like :${key + idx}`;
-      mediumValue[`${key + idx}`] = `%${value}%`;
+      keyMedium = `${key} ILIKE ANY(ARRAY[:...${q}])`;
+      mediumValue[`${q}`] = value.map((v: any) => `%${v}%`);
 
       qb.andWhere(keyMedium, mediumValue);
       delete query[key];
@@ -218,136 +217,170 @@ export class PostsService {
     // Filter
     for (let q in query) {
       if (q.includes('_')) continue;
-      idx++;
 
       let keyMedium = '';
       let mediumValue = {};
 
       const key = q.includes('.') ? q : 'p.' + q;
-      const value = query[q];
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
 
-      keyMedium = `${key} = :${key + idx}`;
-      mediumValue[`${key + idx}`] = value;
+      keyMedium = `${key} IN (:...${q})`;
+      mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
-      delete query[key];
     }
 
-    const [data, count] = await qb.getManyAndCount();
-    return { data, count };
+    const [data, totalCount] = await qb.getManyAndCount();
+    return { data, totalCount };
   }
-
-  // async findMany4(query) {
-  //   const where = {};
-
-  //   const nestizy = (line: string, likeValue: FindOperator<any>) => {
-  //     const segments = line.split('.');
-  //     const maxIdx = segments.length - 1;
-
-  //     const core = {};
-  //     core[segments[maxIdx]] = likeValue;
-
-  //     const result = segments
-  //       .slice(1, maxIdx)
-  //       .reverse()
-  //       .reduce((prev, next) => {
-  //         const obj = {};
-  //         obj[next] = prev;
-  //         return obj;
-  //       }, core);
-
-  //     where[segments[0]] = result;
-  //   };
-
-  //   // OPERATORS
-  //   // LTE
-  //   for (let key in query) {
-  //     if (!key.endsWith('_lte')) continue;
-
-  //     const lteKey = key.slice(0, -4);
-  //     const lteValue = LessThanOrEqual(query[key]);
-
-  //     if (key.includes('.')) {
-  //       nestizy(lteKey, lteValue);
-  //     } else {
-  //       where[lteKey] = lteValue;
-  //     }
-
-  //     delete query[key];
-  //   }
-
-  //   // MTE
-  //   for (let key in query) {
-  //     if (!key.endsWith('_mte')) continue;
-
-  //     const mteKey = key.slice(0, -4);
-  //     const mteValue = MoreThanOrEqual(query[key]);
-
-  //     if (key.includes('.')) {
-  //       nestizy(mteKey, mteValue);
-  //     } else {
-  //       where[mteKey] = mteValue;
-  //     }
-
-  //     delete query[key];
-  //   }
-
-  //   // NE
-  //   for (let key in query) {
-  //     if (!key.endsWith('_ne')) continue;
-
-  //     const neKey = key.slice(0, -3);
-  //     const neValue = Not(query[key]);
-
-  //     if (key.includes('.')) {
-  //       nestizy(neKey, neValue);
-  //     } else {
-  //       where[neKey] = neValue;
-  //     }
-
-  //     delete query[key];
-  //   }
-
-  //   // RELATION
-  //   // const relations = {
-  //   //   user: true,
-  //   // };
-
-  //   // const test = 'lementu';
-  //   // const formattedQuery = test.trim().replace(/ /g, ' & ');
-  //   // const test2 = {
-  //   //   "to_tsvector('simple')": 'post.content',
-  //   //   "to_tsquery('simple')": `${formattedQuery}:*`,
-  //   // };
-
-  //   const res = await this.postRepository.find({
-  //     where,
-  //   });
-
-  //   // const test = 'lementu';
-  //   // const formattedQuery = test.trim().replace(/ /g, ' & ');
-
-  //   // const res = this.dataSource
-  //   //   .createQueryBuilder()
-  //   //   .select('post')
-  //   //   .from(Post, 'post')
-  //   //   .where(
-  //   //     `to_tsvector('simple', post.content) @@ to_tsquery('simple', :formattedQuery)`,
-  //   //     { formattedQuery: `${formattedQuery}:*` },
-  //   //   )
-  //   //   .getMany();
-
-  //   //   const res = this.dataSource
-  //   //     .createQueryBuilder()
-  //   //     .select('post')
-  //   //     .from(Post, 'post')
-  //   //     .where(`post.user.fullname = :gh`, { gh: 'John Doe' })
-  //   //     .getMany();
-
-  //   //   return res;
-  //   // }
-  // }
 }
+
+// async findMany4(query) {
+//   const where = {};
+
+//   const nestizy = (line: string, likeValue: FindOperator<any>) => {
+//     const segments = line.split('.');
+//     const maxIdx = segments.length - 1;
+
+//     const core = {};
+//     core[segments[maxIdx]] = likeValue;
+
+//     const result = segments
+//       .slice(1, maxIdx)
+//       .reverse()
+//       .reduce((prev, next) => {
+//         const obj = {};
+//         obj[next] = prev;
+//         return obj;
+//       }, core);
+
+//     where[segments[0]] = result;
+//   };
+
+//   // OPERATORS
+//   // LTE
+//   for (let key in query) {
+//     if (!key.endsWith('_lte')) continue;
+
+//     const lteKey = key.slice(0, -4);
+//     const lteValue = LessThanOrEqual(query[key]);
+
+//     if (key.includes('.')) {
+//       nestizy(lteKey, lteValue);
+//     } else {
+//       where[lteKey] = lteValue;
+//     }
+
+//     delete query[key];
+//   }
+
+//   // MTE
+//   for (let key in query) {
+//     if (!key.endsWith('_mte')) continue;
+
+//     const mteKey = key.slice(0, -4);
+//     const mteValue = MoreThanOrEqual(query[key]);
+
+//     if (key.includes('.')) {
+//       nestizy(mteKey, mteValue);
+//     } else {
+//       where[mteKey] = mteValue;
+//     }
+
+//     delete query[key];
+//   }
+
+//   // NE
+//   for (let key in query) {
+//     if (!key.endsWith('_ne')) continue;
+
+//     const neKey = key.slice(0, -3);
+//     const neValue = Not(query[key]);
+
+//     if (key.includes('.')) {
+//       nestizy(neKey, neValue);
+//     } else {
+//       where[neKey] = neValue;
+//     }
+
+//     delete query[key];
+//   }
+
+//   // RELATION
+//   // const relations = {
+//   //   user: true,
+//   // };
+
+//   // const test = 'lementu';
+//   // const formattedQuery = test.trim().replace(/ /g, ' & ');
+//   // const test2 = {
+//   //   "to_tsvector('simple')": 'post.content',
+//   //   "to_tsquery('simple')": `${formattedQuery}:*`,
+//   // };
+
+//   const res = await this.postRepository.find({
+//     where,
+//   });
+
+//   // const test = 'lementu';
+//   // const formattedQuery = test.trim().replace(/ /g, ' & ');
+
+//   // const res = this.dataSource
+//   //   .createQueryBuilder()
+//   //   .select('post')
+//   //   .from(Post, 'post')
+//   //   .where(
+//   //     `to_tsvector('simple', post.content) @@ to_tsquery('simple', :formattedQuery)`,
+//   //     { formattedQuery: `${formattedQuery}:*` },
+//   //   )
+//   //   .getMany();
+
+//   //   const res = this.dataSource
+//   //     .createQueryBuilder()
+//   //     .select('post')
+//   //     .from(Post, 'post')
+//   //     .where(`post.user.fullname = :gh`, { gh: 'John Doe' })
+//   //     .getMany();
+
+//   //   return res;
+//   // }
+// }
+
+// keyMedium = `${key} like :${key + idx}`;
+// mediumValue[`${key + idx}`] = `%${value}%`;
+
+// const tag1 = 'tag1';
+// const tag2 = 'tag2';
+// const tags = ['%Tag1%', '%Tag2%'];
+// const tags = ['%Tag1%', '%Tag2%'];
+// keyMedium = `tags ILIKE :Tag1`;
+// mediumValue[`Tag1`] = `%${tag1}%`;
+// qb.andWhere(keyMedium, mediumValue);
+
+// mediumValue = {};
+// keyMedium = `tags ILIKE :Tag2`;
+// mediumValue[`Tag2`] = `%${tag2}%`;
+// qb.andWhere(keyMedium, mediumValue);
+
+// keyMedium = `LOWER(tags) like :Tag1`;
+// mediumValue[`Tag1`] = `%${tag1.toLocaleLowerCase()}%`;
+// qb.andWhere(keyMedium, mediumValue);
+
+// mediumValue = {};
+// keyMedium = `LOWER(tags) like :Tag2`;
+// mediumValue[`Tag2`] = `%${tag2.toLocaleLowerCase()}%`;
+// qb.andWhere(keyMedium, mediumValue);
+
+// keyMedium = `LOWER(${key}) && ARRAY[:...${key}]`;
+// mediumValue[`${key}`] = [...value];
+
+// keyMedium = `${key} IN (:...${key + idx})`;
+// mediumValue[`${key + idx}`] = value;
+
+// console.log('keyMedium', keyMedium);
+// console.log('mediumValue', mediumValue);
+
+// qb.andWhere(keyMedium, mediumValue);
 
 // =================
 // .replace(/[^а-яА-ЯёЁ0-9]/g, ' ') // RU lang

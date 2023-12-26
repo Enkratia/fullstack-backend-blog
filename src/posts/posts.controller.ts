@@ -43,7 +43,7 @@ export class PostsController {
   }
 
   @Get()
-  async findPosts(@Query() query) {
+  async findPosts(@Query() query: QueryType) {
     return await this.postsService.findMany(query);
   }
 
