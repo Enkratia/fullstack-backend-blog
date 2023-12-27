@@ -11,6 +11,7 @@ import {
   UseGuards,
   Req,
   Query,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -20,6 +21,7 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
+import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 
 @Controller('posts')
 export class PostsController {
@@ -29,8 +31,8 @@ export class PostsController {
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async createPost(
-    @UploadedFile(SharpPipe)
-    imageUrl: string | null,
+    @UploadedFile(FileRequiredPipe, SharpPipe)
+    imageUrl: string,
     @Body() dto: CreatePostDto,
     @Req() req,
   ) {
