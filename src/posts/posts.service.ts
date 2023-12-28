@@ -78,6 +78,8 @@ export class PostsService {
       }
     }
 
+    console.log(query);
+
     const qb = this.postRepository.createQueryBuilder('p');
     qb.leftJoinAndSelect('p.user', 'user');
 
