@@ -1,15 +1,8 @@
 import {
-  AfterLoad,
-  BeforeInsert,
-  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -40,7 +33,6 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  // @Column('text', { array: true, default: {} })
   @Column('simple-array')
   tags: string[];
 
@@ -54,14 +46,3 @@ export class Post {
   @UpdateDateColumn()
   updatedAt: string;
 }
-
-// @ManyToMany(() => Tag, (tag) => tag.posts, { cascade: true })
-// @JoinTable({
-//   joinColumn: {
-//     name: 'post_id',
-//   },
-//   inverseJoinColumn: {
-//     name: 'tag_id',
-//   },
-// })
-// tags: Relation<Tag[]>;

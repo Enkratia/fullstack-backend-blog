@@ -58,6 +58,10 @@ export class PostsService {
       post.imageUrl = imageUrl;
     }
 
+    if (typeof updatePostDto.isFeatured === 'boolean') {
+      post.isFeatured = updatePostDto.isFeatured;
+    }
+
     return await this.postRepository.save(post);
   }
 
@@ -77,8 +81,6 @@ export class PostsService {
         throw new BadRequestException('Spaces in keys are not allowed');
       }
     }
-
-    console.log(query);
 
     const qb = this.postRepository.createQueryBuilder('p');
     qb.leftJoinAndSelect('p.user', 'user');

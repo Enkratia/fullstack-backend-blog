@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,6 +22,11 @@ export class UsersController {
   @Get(':id')
   async getOneById(@Param('id') id: number) {
     return await this.usersService.findById(id);
+  }
+
+  @Get()
+  async getAllUsers(@Query() query: QueryType) {
+    return await this.usersService.findAll(query);
   }
 
   @Patch(':id')

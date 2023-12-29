@@ -49,7 +49,7 @@ export class PostsController {
     return await this.postsService.findMany(query);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   update(

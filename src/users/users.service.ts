@@ -21,8 +21,6 @@ const saltRounds = 10;
 export class UsersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    // @InjectRepository(UserLinks)
-    // private userLinksRepository: Repository<UserLinks>,
     @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
@@ -78,6 +76,126 @@ export class UsersService {
 
     const { password, ...result } = user;
     return result;
+  }
+
+  async findAll(query: QueryType) {
+    // WHITEWASH
+    for (let q in query) {
+      if (q.includes(' ')) {
+        throw new BadRequestException('Spaces in keys are not allowed');
+      }
+    }
+
+    const qb = this.usersRepository.createQueryBuilder('u');
+    qb.leftJoinAndSelect('u.userLinks', 'userLinks');
+
+    // PAGINATION
+    if (query._page) {
+      const limit = query._limit ? +query._limit : 8;
+
+      qb.take(limit);
+      qb.skip((query._page - 1) * limit);
+
+      delete query._page;
+      delete query._limit;
+    }
+
+    // SORT (ORDER)
+    if (query._sort) {
+      const order = query._order?.toUpperCase() !== 'DESC' ? 'ASC' : 'DESC';
+      qb.orderBy(`u.${query._sort}`, order);
+
+      delete query._sort;
+      delete query._order;
+    }
+
+    // Operators
+    // NE
+    for (let q in query) {
+      if (!q.endsWith('_ne')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = (q.includes('.') ? q : 'u.' + q).slice(0, -3);
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
+
+      keyMedium = `${key} NOT IN (:...${q})`;
+      mediumValue[`${q}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+      delete query[key];
+    }
+
+    // LTE
+    for (let q in query) {
+      if (!q.endsWith('_lte')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = (q.includes('.') ? q : 'u.' + q).slice(0, -4);
+      const value = query[q];
+
+      keyMedium = `${key} <= :${q}`;
+      mediumValue[`${q}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+      delete query[key];
+    }
+
+    // MTE
+    for (let q in query) {
+      if (!q.endsWith('_mte')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = (q.includes('.') ? q : 'u.' + q).slice(0, -4);
+      const value = query[q];
+
+      keyMedium = `${key} >= :${q}`;
+      mediumValue[`${q}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+      delete query[key];
+    }
+
+    // LIKE
+    for (let q in query) {
+      if (!q.endsWith('_like')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = (q.includes('.') ? q : 'u.' + q).slice(0, -5);
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
+
+      keyMedium = `${key} ILIKE ANY(ARRAY[:...${q}])`;
+      mediumValue[`${q}`] = value.map((v: any) => `%${v}%`);
+
+      qb.andWhere(keyMedium, mediumValue);
+      delete query[key];
+    }
+
+    // EQUAL (Exact comparison)
+    for (let q in query) {
+      if (q.includes('_')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = q.includes('.') ? q : 'u.' + q;
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
+
+      keyMedium = `${key} IN (:...${q})`;
+      mediumValue[`${q}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+    }
+
+    const [data, totalCount] = await qb.getManyAndCount();
+    return { data, totalCount };
   }
 
   async updateById(body: UpdateUserDto, imageUrl: string | null, id: number) {
@@ -140,45 +258,3 @@ export class UsersService {
     };
   }
 }
-
-// EXAMPLE datasource
-// async create(createUserDto: CreateUserDto) {
-//   const result = this.dataSource.manager.transaction(
-//     async (entityManager: EntityManager) => {
-//       const saltRounds = 10;
-
-//       const isExist = await this.usersRepository.findOne({
-//         where: {
-//           email: createUserDto.email,
-//         },
-//       });
-
-//       if (isExist) throw new BadRequestException('This email already exist');
-
-//       // **
-//       const userLinks = new UserLinks();
-
-//       const user = new User();
-//       user.fullname = createUserDto.fullname;
-//       user.email = createUserDto.email;
-//       user.password = await bcrypt.hash(createUserDto.password, saltRounds);
-//       user.userLinks = userLinks;
-
-//       const res = await entityManager.save(user);
-
-//       const payload = {
-//         email: res.email,
-//         id: res.id,
-//       };
-
-//       const { password, ...result } = res;
-
-//       return {
-//         user: result,
-//         backendTokens: await this.generateBackendTokens(payload),
-//       };
-//     },
-//   );
-
-//   return result;
-// }
