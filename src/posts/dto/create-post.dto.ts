@@ -15,4 +15,8 @@ export class CreatePostDto {
 
   @IsString()
   tags: string;
+
+  // УДАЛИТЬ
+  @IsString()
+  tests: string;
 }

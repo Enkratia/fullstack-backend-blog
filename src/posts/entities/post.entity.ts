@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from '../../users/entities/user.entity';
+import { Test } from './test.entity';
 
 @Entity()
 export class Post {
@@ -38,6 +40,9 @@ export class Post {
 
   @Column({ default: false })
   isFeatured: boolean;
+
+  @OneToMany(() => Test, (test) => test.post)
+  tests: Test[];
 
   // **
   @CreateDateColumn()
