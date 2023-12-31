@@ -88,99 +88,6 @@ export class PostsService {
   }
 
   async findMany(query: QueryType) {
-    const limit = 3;
-    const page = 2;
-
-    const result = { data: [], totalCount: 0 };
-
-    const contentResult = await this.testRepository
-      .createQueryBuilder('test')
-      .select('DISTINCT (test.content) as content')
-      .take(limit)
-      .skip((page - 1) * limit)
-      .getRawMany();
-
-    contentResult.forEach((obj) => {
-      result.data.push(obj.content);
-    });
-
-    const countResult = await this.testRepository
-      .createQueryBuilder('tests')
-      .select('COUNT(DISTINCT(tests.content)) as totalCount')
-      .getRawMany();
-
-    result.totalCount = countResult[0].totalCount;
-
-    return result;
-
-    // .createQueryBuilder('test')
-    // .query(`SELECT COUNT(DISTINCT test.id) as test_id`);
-    // .groupBy('tests.content')
-    // .getMany();
-    // .select('test.content')
-    // .groupBy('test.content')
-    // .distinctOn(['test.content'])
-    // .distinct(true)
-    // .getCount();
-
-    // test.select('test.content');
-    // test.distinct();
-    // test.select('DISTINCT (test.content)');
-    // test
-    // const result = await test.getManyAndCount();
-    // const result = await test
-
-    // const result = this.postRepository
-    //   .createQueryBuilder('post')
-    //   .leftJoin('post.tests', 'tests')
-    //   .select('post.tests AS tests')
-    //   .addSelect('COUNT(*) AS count')
-    //   .groupBy('post.tests')
-    //   .getRawMany();
-
-    // const result = await this.testRepository
-    //   .createQueryBuilder('test')
-    //   .select('test.content AS test_count')
-    //   .addSelect('COUNT(*) AS count')
-    //   // .orderBy('test.content')
-    //   // .groupBy('test.content')
-    //   // .where({ uploaderId: In ([1,2,3,4]) })
-    //   .distinctOn(['test.content'])
-    //   // .orderBy({ 'test.content': 'DESC' })
-    //   // .orderBy({ 'test.uploaderId': 'ASC', 'test.createdAt': 'DESC' })
-    //   // .getManyAndCount();
-    //   .getMany();
-
-    // let results = await this.repository.createQueryBuilder('product')
-    // .select("product.releaseDate AS release_date")
-    // .addSelect("COUNT(*) AS count")
-    // .groupBy("product.releaseDate")
-    // .getRawMany();
-
-    // const test = this.postRepository.createQueryBuilder('test');
-    // test.leftJoin('test.tests', 'tests');
-
-    // test.distinctOn(['content']);
-    // test.select('(tests.content)');
-    // test.where('tests distinct on tests.content');
-    // test.getCount();
-    // const result = await test.getManyAndCount();
-    // const result = await test.getManyAndCount();
-
-    // return result;
-
-    // let keyMedium = '';
-    // let mediumValue = {};
-
-    // keyMedium = `test.tags DISTINCT ANY(ARRAY[:...tag111])`;
-    // mediumValue['tag111'] = value.map((v: any) => `%${v}%`);
-
-    // test.andWhere(keyMedium, mediumValue);
-    // // test.distinct(true);
-    // test.
-
-    // test.innerJoin("test.tags")
-
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {
@@ -190,6 +97,37 @@ export class PostsService {
 
     const qb = this.postRepository.createQueryBuilder('p');
     qb.leftJoinAndSelect('p.user', 'user');
+
+    // **********************************************************
+    for (let q in query) {
+      if (!q.endsWith('_have')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = (
+        q.includes('.') ? q.substring(q.lastIndexOf('.') + 1) : q
+      ).slice(0, -5);
+
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
+
+      qb.leftJoin('p.tests', 'tests');
+
+      keyMedium = `${key}.content ILIKE ANY(ARRAY[:...${q}])`;
+      // keyMedium = `LOWER(${key}.content) IN (:...${q.toLowerCase()})`;
+
+      mediumValue[`${q}`] = value;
+
+      qb.leftJoinAndSelect('p.tests', 'test');
+      qb.andWhere(keyMedium, mediumValue);
+      // delete query[q];
+
+      // qb.where('tests.content ILIKE :test', { test: 'ght' });
+    }
+
+    return await qb.getMany();
+
+    // **********************************************************
 
     // FULL-TEXT-SEARCH
     if (query._q) {
@@ -269,7 +207,7 @@ export class PostsService {
       mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
-      delete query[key];
+      delete query[q];
     }
 
     // LTE
@@ -286,7 +224,7 @@ export class PostsService {
       mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
-      delete query[key];
+      delete query[q];
     }
 
     // MTE
@@ -303,7 +241,7 @@ export class PostsService {
       mediumValue[`${q}`] = value;
 
       qb.andWhere(keyMedium, mediumValue);
-      delete query[key];
+      delete query[q];
     }
 
     // LIKE
@@ -320,7 +258,7 @@ export class PostsService {
       mediumValue[`${q}`] = value.map((v: any) => `%${v}%`);
 
       qb.andWhere(keyMedium, mediumValue);
-      delete query[key];
+      delete query[q];
     }
 
     // EQUAL (Exact comparison)
@@ -342,6 +280,32 @@ export class PostsService {
     const [data, totalCount] = await qb.getManyAndCount();
     return { data, totalCount };
   }
+
+  async findTags() {
+    const limit = 10;
+    const page = 1;
+
+    const result = { data: [], totalCount: 0 };
+
+    const contentResult = await this.testRepository
+      .createQueryBuilder('test')
+      .select('DISTINCT (test.content) as content')
+      .addSelect('test.id as id')
+      .take(limit)
+      .skip((page - 1) * limit)
+      .getRawMany();
+
+    result.data = contentResult;
+
+    const countResult = await this.testRepository
+      .createQueryBuilder('test')
+      .select('COUNT(DISTINCT(test.content)) as count')
+      .getRawOne();
+
+    result.totalCount = countResult.count;
+
+    return result;
+  }
 }
 
 // =================
@@ -351,3 +315,25 @@ export class PostsService {
 // const formattedSearchPre = query._q.replace(/[^\p{L}\p{N}]/giu, ' ');
 
 // _equal_all / _like_all ?
+
+// const allTags = await this.postRepository
+//   .createQueryBuilder('t')
+//   .select('t.tags as content')
+//   .getRawMany();
+
+// let string = '';
+
+// allTags.forEach((obj) => {
+//   string += obj.content + ',';
+// });
+
+// let array = string.split(',');
+// let set = new Set(array);
+
+// console.log(array);
+// console.log(string);
+// console.log(set);
+
+// console.timeEnd('time');
+
+// ******************************
