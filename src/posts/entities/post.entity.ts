@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 import { User } from '../../users/entities/user.entity';
-import { Test } from './test.entity';
+import { Tag } from './tag.entity';
 
 @Entity()
 export class Post {
@@ -39,14 +39,15 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  @Column('simple-array')
-  tags: string[];
+  // @Column('simple-array')
+  // tags: string[];
 
   @Column({ default: false })
   isFeatured: boolean;
 
-  @OneToMany(() => Test, (test) => test.post)
-  tests: Test[];
+  @OneToMany(() => Tag, (tags) => tags.post)
+  @JoinColumn({ name: 'tests_id' })
+  tags: Tag[];
 
   // **
   @CreateDateColumn()

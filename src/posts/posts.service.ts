@@ -6,14 +6,14 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 import { User } from '../users/entities/user.entity';
-import { Test } from './entities/test.entity';
+import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Test) private testRepository: Repository<Test>,
+    @InjectRepository(Tag) private tagRepository: Repository<Tag>,
   ) {}
 
   async create(
@@ -33,11 +33,18 @@ export class PostsService {
     post.category = createPostDto.category;
     post.contentJson = createPostDto.contentJson;
     post.contentText = createPostDto.contentText;
-    post.tags = createPostDto.tags.split(',').map((tag) => tag.trim());
     post.imageUrl = imageUrl;
+
+    const tags = createPostDto.tags.split(',').map((tag) => {
+      return new Tag(tag.trim());
+    });
+
+    const tagsRes = await this.tagRepository.save(tags);
+    post.tags = tagsRes;
 
     const postRes = await this.postRepository.save(post);
     user.posts.push(postRes);
+
     const userRes = await this.userRepository.save(user);
 
     return postRes;
@@ -54,22 +61,16 @@ export class PostsService {
     post.category = updatePostDto.category;
     post.contentJson = updatePostDto.contentJson;
     post.contentText = updatePostDto.contentText;
-    post.tags = updatePostDto.tags.split(',').map((tag) => tag.trim());
 
     if (imageUrl) {
       post.imageUrl = imageUrl;
     }
 
-    // УДАЛИТЬ
-    const testEntities = updatePostDto.tests.split(',').map((el) => {
-      const a = new Test();
-      a.content = el.trim();
-      return a;
+    const tags = updatePostDto.tags.split(',').map((tag) => {
+      return new Tag(tag.trim());
     });
-    const testRes = await this.testRepository.save(testEntities);
-    console.log(testRes);
-    post.tests = testEntities;
-    // ***********************
+    const tagsRes = await this.tagRepository.save(tags);
+    post.tags = tagsRes;
 
     if (typeof updatePostDto.isFeatured === 'boolean') {
       post.isFeatured = updatePostDto.isFeatured;
@@ -98,36 +99,8 @@ export class PostsService {
     const qb = this.postRepository.createQueryBuilder('p');
     qb.leftJoinAndSelect('p.user', 'user');
 
-    // **********************************************************
-    for (let q in query) {
-      if (!q.endsWith('_have')) continue;
-
-      let keyMedium = '';
-      let mediumValue = {};
-
-      const key = (
-        q.includes('.') ? q.substring(q.lastIndexOf('.') + 1) : q
-      ).slice(0, -5);
-
-      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
-
-      qb.leftJoin('p.tests', 'tests');
-
-      keyMedium = `${key}.content ILIKE ANY(ARRAY[:...${q}])`;
-      // keyMedium = `LOWER(${key}.content) IN (:...${q.toLowerCase()})`;
-
-      mediumValue[`${q}`] = value;
-
-      qb.leftJoinAndSelect('p.tests', 'test');
-      qb.andWhere(keyMedium, mediumValue);
-      // delete query[q];
-
-      // qb.where('tests.content ILIKE :test', { test: 'ght' });
-    }
-
-    return await qb.getMany();
-
-    // **********************************************************
+    qb.leftJoin('p.tags', 'tags');
+    qb.leftJoinAndSelect('p.tags', 'tags_select');
 
     // FULL-TEXT-SEARCH
     if (query._q) {
@@ -261,6 +234,23 @@ export class PostsService {
       delete query[q];
     }
 
+    // HAVE
+    for (let q in query) {
+      if (!q.endsWith('_have')) continue;
+
+      let keyMedium = '';
+      let mediumValue = {};
+
+      const key = (q.includes('.') ? q.split('.').pop() : q).slice(0, -5);
+      const value = Array.isArray(query[q]) ? query[q] : [query[q]];
+
+      keyMedium = `${key}.content ILIKE ANY(ARRAY[:...${q}])`;
+      mediumValue[`${q}`] = value;
+
+      qb.andWhere(keyMedium, mediumValue);
+      delete query[q];
+    }
+
     // EQUAL (Exact comparison)
     for (let q in query) {
       if (q.includes('_')) continue;
@@ -281,25 +271,27 @@ export class PostsService {
     return { data, totalCount };
   }
 
-  async findTags() {
-    const limit = 10;
-    const page = 1;
-
+  async findTags(query: QueryType) {
     const result = { data: [], totalCount: 0 };
 
-    const contentResult = await this.testRepository
-      .createQueryBuilder('test')
-      .select('DISTINCT (test.content) as content')
-      .addSelect('test.id as id')
-      .take(limit)
-      .skip((page - 1) * limit)
-      .getRawMany();
+    const qb = this.tagRepository.createQueryBuilder('t');
+    qb.select('t.content as content');
+    qb.addSelect('t.id as id');
+    qb.distinctOn(['t.content']);
 
+    if (query._page) {
+      const limit = query._limit ? +query._limit : 8;
+
+      qb.take(limit);
+      qb.skip((query._page - 1) * limit);
+    }
+
+    const contentResult = await qb.getRawMany();
     result.data = contentResult;
 
-    const countResult = await this.testRepository
-      .createQueryBuilder('test')
-      .select('COUNT(DISTINCT(test.content)) as count')
+    const countResult = await this.tagRepository
+      .createQueryBuilder('t')
+      .select('COUNT(DISTINCT(t.content)) as count')
       .getRawOne();
 
     result.totalCount = countResult.count;
@@ -314,7 +306,11 @@ export class PostsService {
 // const formattedSearch = query._q.trim().replace(/ /g, ' & '); // one of the examples how to format search query
 // const formattedSearchPre = query._q.replace(/[^\p{L}\p{N}]/giu, ' ');
 
+// *********************
+
 // _equal_all / _like_all ?
+
+// ***********************
 
 // const allTags = await this.postRepository
 //   .createQueryBuilder('t')
@@ -337,3 +333,7 @@ export class PostsService {
 // console.timeEnd('time');
 
 // ******************************
+// _HAVE_ALL
+// qb.andWhere(`tags.content IN (:...tags)`, { tags: ['razraz'] });
+// qb.andHaving(`COUNT(DISTINCT tags.content) = :length`, { length: 1 });
+// qb.groupBy('p.id, user.id, tags_select.id');

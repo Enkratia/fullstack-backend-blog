@@ -27,6 +27,7 @@ import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  // POST
   @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
@@ -39,6 +40,12 @@ export class PostsController {
     return await this.postsService.create(dto, +req.user.id, imageUrl);
   }
 
+  // GET
+  @Get('tags')
+  async findTags(@Query() query: QueryType) {
+    return await this.postsService.findTags(query);
+  }
+
   @Get(':id')
   async findPost(@Param('id') id: number) {
     return await this.postsService.findOne(id);
@@ -49,15 +56,16 @@ export class PostsController {
     return await this.postsService.findMany(query);
   }
 
+  // PATCH
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  update(
+  async updatePost(
     @UploadedFile(SharpPipe)
     imageUrl: string | null,
     @Param('id') id: number,
     @Body() updateUserDto: UpdatePostDto,
   ) {
-    return this.postsService.update(id, updateUserDto, imageUrl);
+    return await this.postsService.update(id, updateUserDto, imageUrl);
   }
 }
