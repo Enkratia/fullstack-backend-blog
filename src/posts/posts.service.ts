@@ -251,7 +251,7 @@ export class PostsService {
       delete query[q];
     }
 
-    // EQUAL (Exact comparison)
+    // EQUAL (=)
     for (let q in query) {
       if (q.includes('_')) continue;
 
@@ -297,6 +297,10 @@ export class PostsService {
     result.totalCount = countResult.count;
 
     return result;
+  }
+
+  async deletePost() {
+    return await this.postRepository.delete({ id: 1 });
   }
 }
 

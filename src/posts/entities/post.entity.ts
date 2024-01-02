@@ -39,14 +39,13 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   user: Relation<User>;
 
-  // @Column('simple-array')
-  // tags: string[];
-
   @Column({ default: false })
   isFeatured: boolean;
 
-  @OneToMany(() => Tag, (tags) => tags.post)
-  @JoinColumn({ name: 'tests_id' })
+  @OneToMany(() => Tag, (tags) => tags.post, {
+    cascade: true,
+  })
+  @JoinColumn()
   tags: Tag[];
 
   // **

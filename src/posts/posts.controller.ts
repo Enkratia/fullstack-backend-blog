@@ -68,4 +68,10 @@ export class PostsController {
   ) {
     return await this.postsService.update(id, updateUserDto, imageUrl);
   }
+
+  // DELETE
+  @Delete()
+  async deletePost() {
+    return await this.postsService.deletePost();
+  }
 }

@@ -20,7 +20,8 @@ export class Tag {
   content: string;
 
   @ManyToOne(() => Post, (post) => post.tags, {
-    orphanedRowAction: 'delete',
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete', // NEW
   })
   post: Relation<Post>;
 
