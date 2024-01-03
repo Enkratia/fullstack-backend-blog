@@ -70,8 +70,8 @@ export class PostsController {
   }
 
   // DELETE
-  @Delete()
-  async deletePost() {
-    return await this.postsService.deletePost();
-  }
+  // @Delete()
+  // async deletePost() {
+  //   return await this.postsService.deletePost();
+  // }
 }

@@ -1,12 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class WhyWeStarted {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ default: 0 })
   id: number;
-
-  @Column()
-  imageUrl: string;
 
   @Column()
   subtitle: string;
@@ -16,4 +13,7 @@ export class WhyWeStarted {
 
   @Column()
   description: string;
+
+  @Column()
+  imageUrl: string;
 }

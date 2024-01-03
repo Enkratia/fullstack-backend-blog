@@ -45,7 +45,6 @@ export class Post {
   @OneToMany(() => Tag, (tags) => tags.post, {
     cascade: true,
   })
-  @JoinColumn()
   tags: Tag[];
 
   // **

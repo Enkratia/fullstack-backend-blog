@@ -19,6 +19,10 @@ import { ContactUsModule } from './contact-us/contact-us.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
+import { FeaturedInModule } from './featured-in/featured-in.module';
+import { TestimonialModule } from './testimonial/testimonial.module';
+import { AboutUsStaticModule } from './about-us-static/about-us-static.module';
+import { AboutUsStatisticModule } from './about-us-statistic/about-us-statistic.module';
 
 @Module({
   imports: [
@@ -55,6 +59,10 @@ import { PostsModule } from './posts/posts.module';
     AuthModule,
     UsersModule,
     PostsModule,
+    FeaturedInModule,
+    TestimonialModule,
+    AboutUsStaticModule,
+    AboutUsStatisticModule,
   ],
   controllers: [AppController],
   providers: [AppService],
