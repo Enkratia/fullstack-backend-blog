@@ -13,17 +13,33 @@ export class WhyThisBlogService {
     private readonly whyThisBlogRepository: Repository<WhyThisBlog>,
   ) {}
 
-  async create(createWhyThisBlogDto: CreateWhyThisBlogDto) {
-    const result = await this.whyThisBlogRepository.save(createWhyThisBlogDto);
-    return result;
+  async create(dto: CreateWhyThisBlogDto, imageUrl: string) {
+    const whyThisBlog = new WhyThisBlog();
+    whyThisBlog.title = dto.title;
+    whyThisBlog.subtitle = dto.subtitle;
+    whyThisBlog.description = dto.description;
+
+    whyThisBlog.imageUrl = imageUrl;
+
+    return await this.whyThisBlogRepository.save(whyThisBlog);
+  }
+
+  async update(dto: UpdateWhyThisBlogDto, imageUrl: string | null) {
+    const whyThisBlog = new WhyThisBlog();
+    whyThisBlog.title = dto.title;
+    whyThisBlog.subtitle = dto.subtitle;
+    whyThisBlog.description = dto.description;
+
+    whyThisBlog.id = 0;
+
+    if (imageUrl) {
+      whyThisBlog.imageUrl = imageUrl;
+    }
+
+    return await this.whyThisBlogRepository.save(whyThisBlog);
   }
 
   async findAll() {
-    const result = await this.whyThisBlogRepository.find();
-    return result;
+    return await this.whyThisBlogRepository.find();
   }
-
-  // update(id: number, updateWhyThisBlogDto: UpdateWhyThisBlogDto) {
-  //   return `This action updates a #${id} whyThisBlog`;
-  // }
 }

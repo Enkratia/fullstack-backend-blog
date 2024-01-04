@@ -4,11 +4,9 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
-  ValidationPipe,
-  UsePipes,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { UsMissionService } from './us-mission.service';
 import { CreateUsMissionDto } from './dto/create-us-mission.dto';
@@ -18,19 +16,20 @@ import { UpdateUsMissionDto } from './dto/update-us-mission.dto';
 export class UsMissionController {
   constructor(private readonly usMissionService: UsMissionService) {}
 
-  // @Post()
-  // @UsePipes(new ValidationPipe())
-  // create(@Body() createUsMissionDto: CreateUsMissionDto) {
-  //   return this.usMissionService.create(createUsMissionDto);
-  // }
-
-  @Get()
-  findAll() {
-    return this.usMissionService.findAll();
+  @Post()
+  @UseInterceptors(NoFilesInterceptor())
+  async create(@Body() dto: CreateUsMissionDto) {
+    return await this.usMissionService.create(dto);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUsMissionDto: UpdateUsMissionDto) {
-  //   return this.usMissionService.update(+id, updateUsMissionDto);
-  // }
+  @Patch()
+  @UseInterceptors(NoFilesInterceptor())
+  async update(@Body() dto: UpdateUsMissionDto) {
+    return await this.usMissionService.update(dto);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.usMissionService.findAll();
+  }
 }

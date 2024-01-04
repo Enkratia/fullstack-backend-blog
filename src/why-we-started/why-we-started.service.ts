@@ -13,33 +13,33 @@ export class WhyWeStartedService {
     private readonly repository: Repository<WhyWeStarted>,
   ) {}
 
-  // async create(dto: CreateWhyWeStartedDto, imageUrl: string) {
-  //   const objToSave: WhyWeStarted = {
-  //     ...dto,
-  //     imageUrl,
-  //     id: 0,
-  //   };
+  async create(dto: CreateWhyWeStartedDto, imageUrl: string) {
+    const whyWeStarted = new WhyWeStarted();
+    whyWeStarted.title = dto.title;
+    whyWeStarted.subtitle = dto.subtitle;
+    whyWeStarted.description = dto.description;
 
-  //   const result = await this.repository.save(objToSave);
-  //   return result;
-  // }
+    whyWeStarted.imageUrl = imageUrl;
+
+    return await this.repository.save(whyWeStarted);
+  }
 
   async update(dto: UpdateWhyWeStartedDto, imageUrl: string | null) {
-    const objToUpdate: Partial<WhyWeStarted> = {
-      ...dto,
-      id: 0,
-    };
+    const whyWeStarted = new WhyWeStarted();
+    whyWeStarted.title = dto.title;
+    whyWeStarted.subtitle = dto.subtitle;
+    whyWeStarted.description = dto.description;
+
+    whyWeStarted.id = 0;
 
     if (imageUrl) {
-      objToUpdate.imageUrl = imageUrl;
+      whyWeStarted.imageUrl = imageUrl;
     }
 
-    const result = await this.repository.save(objToUpdate);
-    return result;
+    return await this.repository.save(whyWeStarted);
   }
 
   async findAll() {
-    const result = await this.repository.find();
-    return result;
+    return await this.repository.find();
   }
 }

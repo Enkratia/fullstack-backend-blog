@@ -80,6 +80,8 @@ export class PostsService {
   }
 
   async findOne(id: number) {
+    await this.postRepository.increment({ id }, 'views', 1);
+
     return await this.postRepository.findOne({
       where: { id },
       relations: {

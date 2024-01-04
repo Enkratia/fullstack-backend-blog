@@ -4,11 +4,9 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
-  UsePipes,
-  ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { ContactUsService } from './contact-us.service';
 import { CreateContactUsDto } from './dto/create-contact-us.dto';
@@ -19,18 +17,19 @@ export class ContactUsController {
   constructor(private readonly contactUsService: ContactUsService) {}
 
   @Post()
-  @UsePipes(new ValidationPipe())
-  create(@Body() createContactUsDto: CreateContactUsDto) {
-    return this.contactUsService.create(createContactUsDto);
+  @UseInterceptors(NoFilesInterceptor())
+  async create(@Body() dto: CreateContactUsDto) {
+    return await this.contactUsService.create(dto);
+  }
+
+  @Patch()
+  @UseInterceptors(NoFilesInterceptor())
+  async update(@Body() dto: UpdateContactUsDto) {
+    return await this.contactUsService.update(dto);
   }
 
   @Get()
-  findAll() {
-    return this.contactUsService.findAll();
+  async findAll() {
+    return await this.contactUsService.findAll();
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateContactUsDto: UpdateContactUsDto) {
-  //   return this.contactUsService.update(+id, updateContactUsDto);
-  // }
 }

@@ -13,24 +13,29 @@ export class CategoryDescriptionService {
     private readonly categoryDescriptionRepository: Repository<CategoryDescription>,
   ) {}
 
-  // async create(createCategoryDescriptionDto: CreateCategoryDescriptionDto[]) {
-  //   let response = [];
+  async create(dto: CreateCategoryDescriptionDto) {
+    const categoryDescription = new CategoryDescription();
+    categoryDescription.business = dto.business;
+    categoryDescription.economy = dto.economy;
+    categoryDescription.startup = dto.startup;
+    categoryDescription.technology = dto.technology;
 
-  //   for (const item of createCategoryDescriptionDto) {
-  //     const result = await this.categoryDescriptionRepository.save(item);
-  //     response.push(result);
-  //   }
-
-  //   return response;
-  // }
-
-  async findAll() {
-    const response = await this.categoryDescriptionRepository.find();
-
-    return response;
+    return await this.categoryDescriptionRepository.save(categoryDescription);
   }
 
-  // update(id: number, updateCategoryDescriptionDto: UpdateCategoryDescriptionDto) {
-  //   return `This action updates a #${id} categoryDescription`;
-  // }
+  async update(dto: UpdateCategoryDescriptionDto) {
+    const categoryDescription = new CategoryDescription();
+    categoryDescription.business = dto.business;
+    categoryDescription.economy = dto.economy;
+    categoryDescription.startup = dto.startup;
+    categoryDescription.technology = dto.technology;
+
+    categoryDescription.id = 0;
+
+    return await this.categoryDescriptionRepository.save(categoryDescription);
+  }
+
+  async findAll() {
+    return await this.categoryDescriptionRepository.find();
+  }
 }

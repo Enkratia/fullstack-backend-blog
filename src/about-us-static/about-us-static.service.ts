@@ -15,12 +15,18 @@ export class AboutUsStaticService {
 
   async create(dto: CreateAboutUsStaticDto, imageUrl: string) {
     const aboutUsStatic = new AboutUsStatic();
-    aboutUsStatic.headerTitle = dto.headerTitle;
-    aboutUsStatic.headerDescription = dto.headerDescription;
-    aboutUsStatic.missionTitle = dto.missionTitle;
-    aboutUsStatic.missionDescription = dto.missionDescription;
-    aboutUsStatic.visionTitle = dto.visionTitle;
-    aboutUsStatic.visionDescription = dto.visionDescription;
+    aboutUsStatic.header = {
+      title: dto.headerTitle,
+      description: dto.headerDescription,
+    };
+    aboutUsStatic.mission = {
+      title: dto.missionTitle,
+      description: dto.missionDescription,
+    };
+    aboutUsStatic.vision = {
+      title: dto.visionTitle,
+      description: dto.visionDescription,
+    };
 
     aboutUsStatic.imageUrl = imageUrl;
 
@@ -29,12 +35,18 @@ export class AboutUsStaticService {
 
   async update(dto: UpdateAboutUsStaticDto, imageUrl: string | null) {
     const aboutUsStatic = new AboutUsStatic();
-    aboutUsStatic.headerTitle = dto.headerTitle;
-    aboutUsStatic.headerDescription = dto.headerDescription;
-    aboutUsStatic.missionTitle = dto.missionTitle;
-    aboutUsStatic.missionDescription = dto.missionDescription;
-    aboutUsStatic.visionTitle = dto.visionTitle;
-    aboutUsStatic.visionDescription = dto.visionDescription;
+    aboutUsStatic.header = {
+      title: dto.headerTitle,
+      description: dto.headerDescription,
+    };
+    aboutUsStatic.mission = {
+      title: dto.missionTitle,
+      description: dto.missionDescription,
+    };
+    aboutUsStatic.vision = {
+      title: dto.visionTitle,
+      description: dto.visionDescription,
+    };
     aboutUsStatic.id = 0;
 
     if (imageUrl) {

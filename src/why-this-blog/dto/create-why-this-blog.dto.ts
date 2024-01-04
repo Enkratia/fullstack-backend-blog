@@ -1,9 +1,6 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateWhyThisBlogDto {
-  @IsNumber()
-  id: number;
-
   @IsString()
   title: string;
 
@@ -12,7 +9,4 @@ export class CreateWhyThisBlogDto {
 
   @IsString()
   description: string;
-
-  @IsString()
-  imageUrl: string;
 }

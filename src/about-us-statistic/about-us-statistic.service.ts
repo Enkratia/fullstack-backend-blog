@@ -29,9 +29,8 @@ export class AboutUsStatisticService {
     ];
 
     data[0].count = await this.postRepository.count();
+    data[1].count = await this.postRepository.sum('views');
     data[2].count = await this.userRepository.count();
-
-    data[1].count = await this.userRepository.count();
     return data;
   }
 }

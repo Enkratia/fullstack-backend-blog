@@ -1,9 +1,6 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateJoinDto {
-  @IsNumber()
-  id: number;
-
   @IsString()
   title: string;
 

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 class ContactUsHeaderEntity {
   title: string;
@@ -12,14 +12,14 @@ class ContactUsTimeEntity {
   description: string;
 }
 
-class ContactUsDataEntity {
+class ContactUsContactEntity {
   phone: string;
   email: string;
 }
 
 @Entity()
 export class ContactUs {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ default: 0 })
   id: number;
 
   @Column('simple-json')
@@ -29,5 +29,5 @@ export class ContactUs {
   time: ContactUsTimeEntity;
 
   @Column('simple-json')
-  data: ContactUsDataEntity;
+  contact: ContactUsContactEntity;
 }

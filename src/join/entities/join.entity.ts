@@ -1,8 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Join {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ default: 0 })
   id: number;
 
   @Column()

@@ -1,10 +1,19 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class CategoryDescription {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ default: 0 })
   id: number;
 
   @Column()
-  description: string;
+  startup: string;
+
+  @Column()
+  economy: string;
+
+  @Column()
+  technology: string;
+
+  @Column()
+  business: string;
 }

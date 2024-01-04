@@ -35,10 +35,10 @@ export class FeaturedInController {
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   update(
     @UploadedFile(SharpPipe) imageUrl: string | null,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() dto: UpdateFeaturedInDto,
   ) {
-    return this.featuredInService.update(+id, dto, imageUrl);
+    return this.featuredInService.update(id, dto, imageUrl);
   }
 
   @Get()

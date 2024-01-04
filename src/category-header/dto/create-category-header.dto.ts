@@ -1,6 +1,15 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateCategoryHeaderDto {
-  @IsNotEmpty()
-  description: string;
+  @IsString()
+  economy: string;
+
+  @IsString()
+  technology: string;
+
+  @IsString()
+  business: string;
+
+  @IsString()
+  startup: string;
 }

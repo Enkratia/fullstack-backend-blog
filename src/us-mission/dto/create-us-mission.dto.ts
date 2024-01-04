@@ -1,30 +1,15 @@
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-
-class AboutDto {
-  @IsString()
-  title: string;
-
-  @IsString()
-  description: string;
-}
-
-class MissionDto {
-  @IsString()
-  title: string;
-
-  @IsString()
-  description: string;
-}
+import { IsString } from 'class-validator';
 
 export class CreateUsMissionDto {
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => AboutDto)
-  about: AboutDto;
+  @IsString()
+  aboutTitle: string;
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => MissionDto)
-  mission: MissionDto;
+  @IsString()
+  aboutDescription: string;
+
+  @IsString()
+  missionTitle: string;
+
+  @IsString()
+  missionDescription: string;
 }

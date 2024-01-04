@@ -2,15 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
-  ValueTransformer,
 } from 'typeorm';
 
 import { User } from '../../users/entities/user.entity';
@@ -41,6 +37,9 @@ export class Post {
 
   @Column({ default: false })
   isFeatured: boolean;
+
+  @Column({ default: 0 })
+  views: number;
 
   @OneToMany(() => Tag, (tags) => tags.post, {
     cascade: true,

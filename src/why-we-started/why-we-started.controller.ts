@@ -20,14 +20,14 @@ import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 export class WhyWeStartedController {
   constructor(private readonly whyWeStartedService: WhyWeStartedService) {}
 
-  // @Post()
-  // @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  // async create(
-  //   @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
-  //   @Body() dto: CreateWhyWeStartedDto,
-  // ) {
-  //   return await this.whyWeStartedService.create(dto, imageUrl);
-  // }
+  @Post()
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  async create(
+    @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
+    @Body() dto: CreateWhyWeStartedDto,
+  ) {
+    return await this.whyWeStartedService.create(dto, imageUrl);
+  }
 
   @Patch()
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))

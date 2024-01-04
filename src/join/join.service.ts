@@ -12,19 +12,25 @@ export class JoinService {
     @InjectRepository(Join) private readonly joinRepository: Repository<Join>,
   ) {}
 
-  async create(createJoinDto: CreateJoinDto) {
-    const result = await this.joinRepository.save(createJoinDto);
+  async create(dto: CreateJoinDto) {
+    const join = new Join();
+    join.title = dto.title;
+    join.description = dto.description;
 
-    return result;
+    return await this.joinRepository.save(join);
+  }
+
+  async update(dto: UpdateJoinDto) {
+    const join = new Join();
+    join.title = dto.title;
+    join.description = dto.description;
+
+    join.id = 0;
+
+    return await this.joinRepository.save(join);
   }
 
   async findAll() {
-    const result = await this.joinRepository.find();
-
-    return result;
+    return await this.joinRepository.find();
   }
-
-  // update(id: number, updateJoinDto: UpdateJoinDto) {
-  //   return `This action updates a #${id} join`;
-  // }
 }

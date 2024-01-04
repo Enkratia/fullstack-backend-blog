@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 class AboutEntity {
   title: string;
@@ -12,7 +12,7 @@ class MissionEntity {
 
 @Entity()
 export class UsMission {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ default: 0 })
   id: number;
 
   @Column('simple-json')

@@ -5,10 +5,9 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-  UsePipes,
-  ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { JoinService } from './join.service';
 import { CreateJoinDto } from './dto/create-join.dto';
@@ -18,19 +17,20 @@ import { UpdateJoinDto } from './dto/update-join.dto';
 export class JoinController {
   constructor(private readonly joinService: JoinService) {}
 
-  // @Post()
-  // @UsePipes(new ValidationPipe())
-  // create(@Body() createJoinDto: CreateJoinDto) {
-  //   return this.joinService.create(createJoinDto);
-  // }
-
-  @Get()
-  findAll() {
-    return this.joinService.findAll();
+  @Post()
+  @UseInterceptors(NoFilesInterceptor())
+  async create(@Body() dto: CreateJoinDto) {
+    return await this.joinService.create(dto);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateJoinDto: UpdateJoinDto) {
-  //   return this.joinService.update(+id, updateJoinDto);
-  // }
+  @Patch()
+  @UseInterceptors(NoFilesInterceptor())
+  async update(@Body() dto: UpdateJoinDto) {
+    return await this.joinService.update(dto);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.joinService.findAll();
+  }
 }

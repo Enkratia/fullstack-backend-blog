@@ -4,11 +4,9 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
-  ValidationPipe,
-  UsePipes,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { CategoryHeaderService } from './category-header.service';
 import { CreateCategoryHeaderDto } from './dto/create-category-header.dto';
@@ -18,19 +16,20 @@ import { UpdateCategoryHeaderDto } from './dto/update-category-header.dto';
 export class CategoryHeaderController {
   constructor(private readonly categoryHeaderService: CategoryHeaderService) {}
 
-  // @Post()
-  // @UsePipes(new ValidationPipe())
-  // create(@Body() createCategoryHeaderDto: CreateCategoryHeaderDto) {
-  //   return this.categoryHeaderService.create(createCategoryHeaderDto);
-  // }
-
-  @Get()
-  findAll() {
-    return this.categoryHeaderService.findAll();
+  @Post()
+  @UseInterceptors(NoFilesInterceptor())
+  async create(@Body() dto: CreateCategoryHeaderDto) {
+    return await this.categoryHeaderService.create(dto);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCategoryHeaderDto: UpdateCategoryHeaderDto) {
-  //   return this.categoryHeaderService.update(+id, updateCategoryHeaderDto);
-  // }
+  @Patch()
+  @UseInterceptors(NoFilesInterceptor())
+  async update(@Body() dto: UpdateCategoryHeaderDto) {
+    return await this.categoryHeaderService.update(dto);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.categoryHeaderService.findAll();
+  }
 }

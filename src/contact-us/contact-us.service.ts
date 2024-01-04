@@ -13,17 +13,49 @@ export class ContactUsService {
     private readonly contactUsRepository: Repository<ContactUs>,
   ) {}
 
-  async create(createContactUsDto: CreateContactUsDto) {
-    const result = await this.contactUsRepository.save(createContactUsDto);
-    return result;
+  async create(dto: CreateContactUsDto) {
+    const contactUs = new ContactUs();
+    contactUs.header = {
+      title: dto.headerTitle,
+      subtitle: dto.headerSubtitle,
+      description: dto.headerDescription,
+    };
+    contactUs.time = {
+      days: dto.timeDays,
+      hours: dto.timeHours,
+      description: dto.timeDescription,
+    };
+    contactUs.contact = {
+      phone: dto.contactPhone,
+      email: dto.contactEmail,
+    };
+
+    return await this.contactUsRepository.save(contactUs);
+  }
+
+  async update(dto: UpdateContactUsDto) {
+    const contactUs = new ContactUs();
+    contactUs.header = {
+      title: dto.headerTitle,
+      subtitle: dto.headerSubtitle,
+      description: dto.headerDescription,
+    };
+    contactUs.time = {
+      days: dto.timeDays,
+      hours: dto.timeHours,
+      description: dto.timeDescription,
+    };
+    contactUs.contact = {
+      phone: dto.contactPhone,
+      email: dto.contactEmail,
+    };
+
+    contactUs.id = 0;
+
+    return await this.contactUsRepository.save(contactUs);
   }
 
   async findAll() {
-    const result = await this.contactUsRepository.find();
-    return result;
+    return await this.contactUsRepository.find();
   }
-
-  // update(id: number, updateContactUsDto: UpdateContactUsDto) {
-  //   return `This action updates a #${id} contactUs`;
-  // }
 }

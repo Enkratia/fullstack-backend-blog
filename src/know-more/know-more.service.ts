@@ -13,17 +13,33 @@ export class KnowMoreService {
     private readonly knowMoreRepository: Repository<KnowMore>,
   ) {}
 
-  async create(createKnowMoreDto: CreateKnowMoreDto) {
-    const result = await this.knowMoreRepository.save(createKnowMoreDto);
-    return result;
+  async create(dto: CreateKnowMoreDto, imageUrl: string) {
+    const knowMore = new KnowMore();
+    knowMore.title = dto.title;
+    knowMore.subtitle = dto.subtitle;
+    knowMore.description = dto.description;
+
+    knowMore.imageUrl = imageUrl;
+
+    return await this.knowMoreRepository.save(knowMore);
+  }
+
+  async update(dto: UpdateKnowMoreDto, imageUrl: string | null) {
+    const knowMore = new KnowMore();
+    knowMore.title = dto.title;
+    knowMore.subtitle = dto.subtitle;
+    knowMore.description = dto.description;
+
+    knowMore.id = 0;
+
+    if (imageUrl) {
+      knowMore.imageUrl = imageUrl;
+    }
+
+    return await this.knowMoreRepository.save(knowMore);
   }
 
   async findAll() {
-    const result = await this.knowMoreRepository.find();
-    return result;
+    return await this.knowMoreRepository.find();
   }
-
-  // update(id: number, updateKnowMoreDto: UpdateKnowMoreDto) {
-  //   return `This action updates a #${id} knowMore`;
-  // }
 }

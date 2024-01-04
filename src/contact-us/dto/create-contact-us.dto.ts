@@ -1,57 +1,27 @@
-import { Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-
-class ContactUsHeaderDto {
-  @IsString()
-  title: string;
-
-  @IsString()
-  subtitle: string;
-
-  @IsString()
-  description: string;
-}
-
-class ContactUsTimeDto {
-  @IsString()
-  days: string;
-
-  @IsString()
-  hours: string;
-
-  @IsString()
-  description: string;
-}
-
-class ContactUsDataDto {
-  @IsString()
-  phone: string;
-
-  @IsString()
-  email: string;
-}
+import { IsString } from 'class-validator';
 
 export class CreateContactUsDto {
-  @IsNumber()
-  id: number;
+  @IsString()
+  headerSubtitle: string;
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => ContactUsHeaderDto)
-  header: ContactUsHeaderDto;
+  @IsString()
+  headerTitle: string;
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => ContactUsTimeDto)
-  time: ContactUsTimeDto;
+  @IsString()
+  headerDescription: string;
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => ContactUsDataDto)
-  data: ContactUsDataDto;
+  @IsString()
+  timeDays: string;
+
+  @IsString()
+  timeHours: string;
+
+  @IsString()
+  timeDescription: string;
+
+  @IsString()
+  contactPhone: string;
+
+  @IsString()
+  contactEmail: string;
 }

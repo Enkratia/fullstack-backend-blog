@@ -14,25 +14,26 @@ export class FeaturedInService {
   ) {}
 
   async create(dto: CreateFeaturedInDto, imageUrl: string) {
-    const objToCreate = {
-      ...dto,
-      imageUrl,
-    };
+    const featuredIn = new FeaturedIn();
+    featuredIn.title = dto.title;
+    featuredIn.linkUrl = dto.linkUrl;
+    featuredIn.imageUrl = imageUrl;
 
-    return await this.repository.save(objToCreate);
+    return await this.repository.save(featuredIn);
   }
 
   async update(id: number, dto: UpdateFeaturedInDto, imageUrl: string | null) {
-    const objToUpdate: Partial<FeaturedIn> = {
-      ...dto,
-      id,
-    };
+    const featuredIn = new FeaturedIn();
+    featuredIn.title = dto.title;
+    featuredIn.linkUrl = dto.linkUrl;
+
+    featuredIn.id = id;
 
     if (imageUrl) {
-      objToUpdate.imageUrl = imageUrl;
+      featuredIn.imageUrl = imageUrl;
     }
 
-    return await this.repository.save(objToUpdate);
+    return await this.repository.save(featuredIn);
   }
 
   async findAll() {

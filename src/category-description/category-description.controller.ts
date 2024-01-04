@@ -4,11 +4,9 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
-  UsePipes,
-  ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { CategoryDescriptionService } from './category-description.service';
 import { CreateCategoryDescriptionDto } from './dto/create-category-description.dto';
@@ -20,19 +18,20 @@ export class CategoryDescriptionController {
     private readonly categoryDescriptionService: CategoryDescriptionService,
   ) {}
 
-  // @Post()
-  // @UsePipes(new ValidationPipe())
-  // create(@Body() createCategoryDescriptionDto: CreateCategoryDescriptionDto[]) {
-  //   return this.categoryDescriptionService.create(createCategoryDescriptionDto);
-  // }
-
-  @Get()
-  findAll() {
-    return this.categoryDescriptionService.findAll();
+  @Post()
+  @UseInterceptors(NoFilesInterceptor())
+  async create(@Body() dto: CreateCategoryDescriptionDto) {
+    return await this.categoryDescriptionService.create(dto);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateCategoryDescriptionDto: UpdateCategoryDescriptionDto) {
-  //   return this.categoryDescriptionService.update(+id, updateCategoryDescriptionDto);
-  // }
+  @Patch()
+  @UseInterceptors(NoFilesInterceptor())
+  async update(@Body() dto: UpdateCategoryDescriptionDto) {
+    return await this.categoryDescriptionService.update(dto);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.categoryDescriptionService.findAll();
+  }
 }

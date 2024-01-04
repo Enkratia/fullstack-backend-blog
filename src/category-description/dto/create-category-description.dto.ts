@@ -1,9 +1,15 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateCategoryDescriptionDto {
-  @IsNumber()
-  id: number;
+  @IsString()
+  startup: string;
 
   @IsString()
-  description: string;
+  economy: string;
+
+  @IsString()
+  technology: string;
+
+  @IsString()
+  business: string;
 }
