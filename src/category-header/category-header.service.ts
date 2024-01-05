@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,28 +14,50 @@ export class CategoryHeaderService {
   ) {}
 
   async create(dto: CreateCategoryHeaderDto) {
-    const categoryHeader = new CategoryHeader();
-    categoryHeader.business = dto.business;
-    categoryHeader.economy = dto.economy;
-    categoryHeader.technology = dto.technology;
-    categoryHeader.startup = dto.startup;
+    const headers = [];
 
-    return await this.categoryHeaderRepository.save(categoryHeader);
+    for (let key in dto) {
+      const categoryHeader = new CategoryHeader();
+      categoryHeader.category = key;
+      categoryHeader.description = dto[key];
+      headers.push(categoryHeader);
+    }
+
+    return await this.categoryHeaderRepository.save(headers);
   }
 
   async update(dto: UpdateCategoryHeaderDto) {
-    const categoryHeader = new CategoryHeader();
-    categoryHeader.business = dto.business;
-    categoryHeader.economy = dto.economy;
-    categoryHeader.technology = dto.technology;
-    categoryHeader.startup = dto.startup;
+    const headers = [];
 
-    categoryHeader.id = 0;
+    for (let key in dto) {
+      const categoryHeader = new CategoryHeader();
+      categoryHeader.category = key;
+      categoryHeader.description = dto[key];
+      headers.push(categoryHeader);
+    }
 
-    return await this.categoryHeaderRepository.save(categoryHeader);
+    return await this.categoryHeaderRepository.save(headers);
   }
 
-  async findAll() {
-    return await this.categoryHeaderRepository.find();
+  async findAll(query: QueryType) {
+    for (let q in query) {
+      if (q.includes(' ')) {
+        throw new BadRequestException('Spaces in keys are not allowed');
+      }
+    }
+
+    const qb = this.categoryHeaderRepository.createQueryBuilder('h');
+
+    for (let q in query) {
+      let keyMedium = '';
+      let mediumValue = {};
+
+      keyMedium = `h.${q} = :${q}`;
+      mediumValue[`${q}`] = query[q];
+
+      qb.where(keyMedium, mediumValue);
+    }
+
+    return await qb.getMany();
   }
 }

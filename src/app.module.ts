@@ -23,6 +23,9 @@ import { FeaturedInModule } from './featured-in/featured-in.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
 import { AboutUsStaticModule } from './about-us-static/about-us-static.module';
 import { AboutUsStatisticModule } from './about-us-statistic/about-us-statistic.module';
+import { FooterBottomModule } from './footer-bottom/footer-bottom.module';
+import { ContactUsQueriesModule } from './contact-us-queries/contact-us-queries.module';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
   imports: [
@@ -63,6 +66,9 @@ import { AboutUsStatisticModule } from './about-us-statistic/about-us-statistic.
     TestimonialModule,
     AboutUsStaticModule,
     AboutUsStatisticModule,
+    FooterBottomModule,
+    ContactUsQueriesModule,
+    SubscribeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

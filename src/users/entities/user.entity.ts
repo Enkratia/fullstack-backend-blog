@@ -8,9 +8,6 @@ import {
   JoinColumn,
   Relation,
   OneToMany,
-  JoinTable,
-  BeforeUpdate,
-  AfterLoad,
 } from 'typeorm';
 
 import { UserLinks } from './userLinks.entity';

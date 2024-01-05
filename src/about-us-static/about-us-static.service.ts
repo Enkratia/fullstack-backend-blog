@@ -47,6 +47,7 @@ export class AboutUsStaticService {
       title: dto.visionTitle,
       description: dto.visionDescription,
     };
+
     aboutUsStatic.id = 0;
 
     if (imageUrl) {
