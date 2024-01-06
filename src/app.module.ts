@@ -26,6 +26,8 @@ import { AboutUsStatisticModule } from './about-us-statistic/about-us-statistic.
 import { FooterBottomModule } from './footer-bottom/footer-bottom.module';
 import { ContactUsQueriesModule } from './contact-us-queries/contact-us-queries.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
+import { ContactUsMessagesModule } from './contact-us-messages/contact-us-messages.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -69,6 +71,8 @@ import { SubscribeModule } from './subscribe/subscribe.module';
     FooterBottomModule,
     ContactUsQueriesModule,
     SubscribeModule,
+    ContactUsMessagesModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
