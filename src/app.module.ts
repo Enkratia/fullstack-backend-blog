@@ -27,7 +27,7 @@ import { FooterBottomModule } from './footer-bottom/footer-bottom.module';
 import { ContactUsQueriesModule } from './contact-us-queries/contact-us-queries.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { ContactUsMessagesModule } from './contact-us-messages/contact-us-messages.module';
-import { MailerModule } from './mailer/mailer.module';
+import { MailerModule } from './_mailer/mailer.module';
 
 @Module({
   imports: [
