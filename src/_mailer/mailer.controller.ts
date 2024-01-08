@@ -23,5 +23,3 @@ export class MailerController {
     return await this.mailerService.sendMail(dto);
   }
 }
-
-// WP5ha1F08bZEtk4RXUs0

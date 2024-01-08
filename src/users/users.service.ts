@@ -34,8 +34,6 @@ export class UsersService {
 
     if (isExist) throw new BadRequestException('This email already exist');
 
-    // const post = new Post();
-
     const userLinks = new UserLinks();
     const user = await this.usersRepository.save({
       fullname: createUserDto.fullname,

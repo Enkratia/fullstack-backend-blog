@@ -3,11 +3,10 @@ import {
   Post,
   UseGuards,
   Req,
-  UsePipes,
-  ValidationPipe,
   Body,
-  Get,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -24,7 +23,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @UsePipes(new ValidationPipe())
+  @UseInterceptors(NoFilesInterceptor())
   async register(@Body() dto: CreateUserDto) {
     return await this.usersService.create(dto);
   }
