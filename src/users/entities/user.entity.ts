@@ -39,6 +39,9 @@ export class User {
   @Column({ default: '' })
   representation: string;
 
+  @Column({ default: false })
+  emailVerified: boolean;
+
   @OneToOne(() => UserLinks, (userLinks) => userLinks.user, {
     cascade: true,
   })

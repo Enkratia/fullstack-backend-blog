@@ -7,6 +7,7 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UserLinks } from './entities/userLinks.entity';
+import { MailerService } from '../_mailer/mailer.service';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { UserLinks } from './entities/userLinks.entity';
       inject: [ConfigService],
     }),
   ],
-  providers: [UsersService, JwtService],
+  providers: [UsersService, JwtService, MailerService],
   controllers: [UsersController],
   exports: [UsersService],
 })

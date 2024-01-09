@@ -15,6 +15,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+import { MailerService } from '../_mailer/mailer.service';
+import { template } from '../_mailer/templates/template';
+
 const saltRounds = 10;
 
 @Injectable()
@@ -23,6 +26,7 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -49,6 +53,16 @@ export class UsersService {
     };
 
     const { password, ...result } = user;
+
+    const mailOptions = {
+      recipients: [{ name: '', address: user.email }],
+      subject: 'Finsweet Test',
+      html: template,
+      // text: 'test',
+    };
+
+    const emailRes = await this.mailerService.sendMail(mailOptions);
+    console.log(emailRes);
 
     return {
       user: result,

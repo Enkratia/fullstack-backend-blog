@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { UserLinks } from '../users/entities/userLinks.entity';
+import { MailerService } from '../_mailer/mailer.service';
 
 @Module({
   imports: [
@@ -28,7 +29,13 @@ import { UserLinks } from '../users/entities/userLinks.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    UsersService,
+    LocalStrategy,
+    JwtStrategy,
+    MailerService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

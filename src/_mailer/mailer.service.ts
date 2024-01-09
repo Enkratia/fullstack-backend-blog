@@ -9,9 +9,10 @@ import { ISendEmail } from './interfaces/mail.interface';
 export class MailerService {
   mailTransport() {
     const transporter = nodemailer.createTransport({
+      service: 'gmail',
       // pool: true,
-      host: process.env.MAIL_HOST,
-      port: +process.env.MAIL_PORT,
+      // host: process.env.MAIL_HOST,
+      // port: +process.env.MAIL_PORT,
       secure: true,
       auth: {
         user: process.env.MAIL_ADDRESS,

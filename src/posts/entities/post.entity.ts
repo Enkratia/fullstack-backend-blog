@@ -32,7 +32,10 @@ export class Post {
   @Column({ default: '' })
   imageUrl: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   user: Relation<User>;
 
   @Column({ default: false })
