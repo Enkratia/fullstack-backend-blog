@@ -8,3 +8,10 @@ export interface ISendEmail {
   text?: string;
   placeholderReplacements?: Record<string, string>;
 }
+
+// **
+export interface ICompileActivationTemplate {
+  activationUrl: string;
+  siteUrl: string;
+  email: string;
+}

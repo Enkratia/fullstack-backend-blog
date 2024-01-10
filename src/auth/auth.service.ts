@@ -1,5 +1,9 @@
 import * as bcrypt from 'bcrypt';
 
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+
 import {
   BadRequestException,
   Injectable,
@@ -7,10 +11,15 @@ import {
 } from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    @InjectDataSource() private dataSource: DataSource,
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
   async validateUser(email: string, pass: string) {
     let isPasswordMatch = false;
@@ -49,5 +58,17 @@ export class AuthService {
     return {
       backendTokens: await this.usersService.generateBackendTokens(payload),
     };
+  }
+
+  async activateUser(body: Record<'token', string>) {
+    const res = await this.jwtService.verify(body.token);
+
+    const isExist = await this.usersService.findByEmail(res.email);
+    if (!isExist) throw new BadRequestException('User not found');
+
+    const user = new User();
+    user.emailVerified = true;
+
+    return await this.dataSource.manager.update(User, { id: isExist.id }, user);
   }
 }

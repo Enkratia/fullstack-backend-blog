@@ -40,6 +40,11 @@ export class AuthController {
     return await this.authService.refreshToken(req.user);
   }
 
+  @Post('activate')
+  async activateUser(@Body() body: Record<'token', string>) {
+    return await this.authService.activateUser(body);
+  }
+
   // Для теста
   // @UseGuards(JwtAuthGuard)
   // @Get('profile')

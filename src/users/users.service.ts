@@ -16,7 +16,7 @@ import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 import { MailerService } from '../_mailer/mailer.service';
-import { template } from '../_mailer/templates/template';
+import { compileActivationTemplate } from '../_mailer/compilers';
 
 const saltRounds = 10;
 
@@ -56,13 +56,10 @@ export class UsersService {
 
     const mailOptions = {
       recipients: [{ name: '', address: user.email }],
-      subject: 'Finsweet Test',
-      html: template,
-      // text: 'test',
+      subject: 'Email Activation',
+      html: compileActivationTemplate({ email: user.email }),
     };
-
-    const emailRes = await this.mailerService.sendMail(mailOptions);
-    console.log(emailRes);
+    await this.mailerService.sendMail(mailOptions);
 
     return {
       user: result,

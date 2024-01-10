@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
-import { ISendEmail } from './interfaces/mail.interface';
+import { ISendEmail } from './types/types';
 
 @Injectable()
 export class MailerService {
