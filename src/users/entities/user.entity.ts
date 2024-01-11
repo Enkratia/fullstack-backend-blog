@@ -8,6 +8,7 @@ import {
   JoinColumn,
   Relation,
   OneToMany,
+  PrimaryColumn,
 } from 'typeorm';
 
 import { UserLinks } from './userLinks.entity';
@@ -15,7 +16,7 @@ import { Post } from '../../posts/entities/post.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column()

@@ -6,7 +6,9 @@ import { JwtService } from '@nestjs/jwt';
 
 import {
   BadRequestException,
+  GoneException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -64,7 +66,9 @@ export class AuthService {
     const res = await this.jwtService.verify(body.token);
 
     const isExist = await this.usersService.findByEmail(res.email);
-    if (!isExist) throw new BadRequestException('User not found');
+
+    if (!isExist) throw new NotFoundException('Not found');
+    if (isExist.emailVerified) throw new GoneException('Already activated');
 
     const user = new User();
     user.emailVerified = true;
