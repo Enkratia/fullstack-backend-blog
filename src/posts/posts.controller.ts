@@ -37,7 +37,7 @@ export class PostsController {
     @Body() dto: CreatePostDto,
     @Req() req,
   ) {
-    return await this.postsService.create(dto, +req.user.id, imageUrl);
+    return await this.postsService.create(dto, req.user.id, imageUrl);
   }
 
   // GET
@@ -47,7 +47,7 @@ export class PostsController {
   }
 
   @Get(':id')
-  async findPost(@Param('id') id: number) {
+  async findPost(@Param('id') id: string) {
     return await this.postsService.findOne(id);
   }
 
@@ -63,7 +63,7 @@ export class PostsController {
   async updatePost(
     @UploadedFile(SharpPipe)
     imageUrl: string | null,
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdatePostDto,
   ) {
     return await this.postsService.update(id, updateUserDto, imageUrl);

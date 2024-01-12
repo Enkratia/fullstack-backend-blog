@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -36,7 +37,7 @@ export class UsersService {
       },
     });
 
-    if (isExist) throw new BadRequestException('This email already exist');
+    if (isExist) throw new ConflictException('This email already exist');
 
     const userLinks = new UserLinks();
     const user = await this.usersRepository.save({
@@ -73,7 +74,7 @@ export class UsersService {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id },
       relations: {
@@ -207,7 +208,7 @@ export class UsersService {
     return { data, totalCount };
   }
 
-  async updateById(body: UpdateUserDto, imageUrl: string | null, id: number) {
+  async updateById(body: UpdateUserDto, imageUrl: string | null, id: string) {
     const res = await this.usersRepository.findOne({
       where: { id },
       relations: {
@@ -252,7 +253,7 @@ export class UsersService {
   }
 
   // Перенести в auth(?)
-  async generateBackendTokens(payload: { email: string; id: number }) {
+  async generateBackendTokens(payload: { email: string; id: string }) {
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,

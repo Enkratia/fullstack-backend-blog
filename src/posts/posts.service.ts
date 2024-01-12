@@ -18,7 +18,7 @@ export class PostsService {
 
   async create(
     createPostDto: CreatePostDto,
-    id: number,
+    id: string,
     imageUrl: string | null,
   ) {
     const user = await this.userRepository.findOne({
@@ -51,7 +51,7 @@ export class PostsService {
   }
 
   async update(
-    id: number,
+    id: string,
     updatePostDto: UpdatePostDto,
     imageUrl: string | null,
   ) {
@@ -79,7 +79,7 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     await this.postRepository.increment({ id }, 'views', 1);
 
     return await this.postRepository.findOne({
@@ -302,7 +302,7 @@ export class PostsService {
   }
 
   async deletePost() {
-    return await this.postRepository.delete({ id: 1 });
+    return await this.postRepository.delete({ id: '1' });
   }
 }
 

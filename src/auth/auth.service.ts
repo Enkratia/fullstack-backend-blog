@@ -5,7 +5,6 @@ import { DataSource } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 
 import {
-  BadRequestException,
   GoneException,
   Injectable,
   NotFoundException,
@@ -36,7 +35,7 @@ export class AuthService {
       return result;
     }
 
-    throw new BadRequestException('Email or password are incorrect');
+    throw new UnauthorizedException('Email or password are incorrect');
   }
 
   async login(user: any) {
@@ -67,7 +66,7 @@ export class AuthService {
 
     const isExist = await this.usersService.findByEmail(res.email);
 
-    if (!isExist) throw new NotFoundException('Not found');
+    if (!isExist) throw new NotFoundException();
     if (isExist.emailVerified) throw new GoneException('Already activated');
 
     const user = new User();

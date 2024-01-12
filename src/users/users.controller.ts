@@ -20,7 +20,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
-  async getOneById(@Param('id') id: number) {
+  async getOneById(@Param('id') id: string) {
     return await this.usersService.findById(id);
   }
 
@@ -35,7 +35,7 @@ export class UsersController {
     @UploadedFile(SharpPipe)
     imageUrl: string | null,
     @Body() body: UpdateUserDto,
-    @Param('id') id: number,
+    @Param('id') id: string,
   ) {
     return await this.usersService.updateById(body, imageUrl, id);
   }

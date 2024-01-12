@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
 
 import { AppController } from './app.controller';
@@ -28,9 +29,11 @@ import { ContactUsQueriesModule } from './contact-us-queries/contact-us-queries.
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { ContactUsMessagesModule } from './contact-us-messages/contact-us-messages.module';
 import { MailerModule } from './_mailer/mailer.module';
+import { TasksModule } from './_tasks/_tasks.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     CategoryHeaderModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..'),
@@ -73,6 +76,7 @@ import { MailerModule } from './_mailer/mailer.module';
     SubscribeModule,
     ContactUsMessagesModule,
     MailerModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

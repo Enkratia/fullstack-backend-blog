@@ -4,23 +4,39 @@ import { Repository } from 'typeorm';
 
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import { Subscribe } from './entities/subscribe.entity';
+import { MailerService } from '../_mailer/mailer.service';
 
 @Injectable()
 export class SubscribeService {
   constructor(
     @InjectRepository(Subscribe)
-    private readonly repository: Repository<Subscribe>,
+    private readonly subscribeRepository: Repository<Subscribe>,
+    private mailerService: MailerService,
   ) {}
 
   async create(dto: CreateSubscribeDto) {
     const subscribe = new Subscribe();
     subscribe.email = dto.email;
 
-    return this.repository.save(subscribe);
+    return this.subscribeRepository.save(subscribe);
   }
 
   async findAll() {
-    return this.repository.find();
+    return this.subscribeRepository.find();
+  }
+
+  async sendMailToSubscribers() {
+    const emailsRaw = await this.subscribeRepository
+      .createQueryBuilder('s')
+      .select('s.email AS email')
+      .getRawMany();
+
+    const emails = emailsRaw.map((obj) => {
+      return { name: '', address: obj.email };
+    });
+
+    console.log(emails);
+    // const t = await this.mailerService.sendMail();
   }
 
   // findOne(id: number) {
