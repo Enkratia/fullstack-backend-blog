@@ -142,11 +142,11 @@ export const emailActivation = `
               </tr>
 
               <tr>
-                <td style="padding: 0 0 20px;">
-                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-spacing: 0; mso-cellspacing: 0; mso-padding-alt: 0;">
+                <td align="center" style="padding: 0 0 20px;">
+                  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-spacing: 0; mso-cellspacing: 0; mso-padding-alt: 0;">
                     <tr>
                       <td style="border-radius: 8px; padding: 0;" align="center" bgcolor="#ffd050">
-                        <a href="{{activationUrl}}" style="background-color: #ffd050; border-radius: 8px; color: #000001; display: block; font-size: 16px; font-weight: normal; font-style: normal; text-decoration: none; min-width: 28px; text-align: center; letter-spacing: 0px; padding: 10px 28px; border: 2px solid #ffd050;" target="_blank">
+                        <a href="{{activationUrl}}" style="background-color: #ffd050; border-radius: 8px; color: #000001; display: block; font-size: 16px; font-weight: normal; font-style: normal; text-decoration: none; min-width: 28px; text-align: center; letter-spacing: 0px; padding: 16px 28px; border: 2px solid #ffd050;" target="_blank">
                           Confirm email
                         </a>
                       </td>

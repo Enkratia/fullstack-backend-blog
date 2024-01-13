@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
+import Handlebars from 'handlebars';
 import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
 import { ISendEmail } from './types/types';
+import { emailActivation } from './templates/emailActivation';
+import {
+  ICompileEmailActivationTemplate,
+  ICompileSubscriptionPostTemplate,
+} from './types/types';
+import { subscriptionPost } from './templates/subscriptionPost';
 
 @Injectable()
 export class MailerService {
+  constructor(private jwtService: JwtService) {}
+
   mailTransport() {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -40,12 +50,36 @@ export class MailerService {
       html,
     };
 
-    try {
-      return await transport.sendMail(options);
-    } catch (error) {
-      console.log(error);
+    return await transport.sendMail(options);
+  }
 
-      // Добавить удаление почт при ошибке 550
-    }
+  // **
+  async compileEmailActivationTemplate({ email }: { email: string }) {
+    const siteUrl = process.env.FRONTEND_URL;
+    const activationToken = await this.jwtService.signAsync({ email });
+
+    const vars: ICompileEmailActivationTemplate = {
+      email: email,
+      siteUrl: siteUrl,
+      activationUrl: siteUrl + '/activation/' + activationToken,
+    };
+
+    const template = Handlebars.compile(emailActivation);
+    const htmlBody = template(vars);
+
+    return htmlBody;
+  }
+
+  // **
+  // async compileSubscriptionResponseTemplate({ email }: { email: string }) {}
+
+  // **
+  async compileSubscriptionPostTemplate(
+    vars: ICompileSubscriptionPostTemplate,
+  ) {
+    const template = Handlebars.compile(subscriptionPost);
+
+    const htmlBody = template(vars);
+    return htmlBody;
   }
 }

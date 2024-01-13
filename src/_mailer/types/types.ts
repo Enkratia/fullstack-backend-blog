@@ -10,8 +10,37 @@ export interface ISendEmail {
 }
 
 // **
-export interface ICompileActivationTemplate {
+export interface ICompileEmailActivationTemplate {
   activationUrl: string;
   siteUrl: string;
   email: string;
 }
+
+// **
+export interface ICompileSubscriptionPostTemplate {
+  facebookLinkUrl: string;
+  twitterLinkUrl: string;
+  instagramLinkUrl: string;
+  linkedinLinkUrl: string;
+  description: string;
+  readMoreUrl: string;
+  imageUrl: string;
+  title: string;
+  siteUrl: string;
+  facebookImageUrl: string;
+  twitterImageUrl: string;
+  instagramImageUrl: string;
+  linkedinImageUrl: string;
+  unsubscriptionLinkUrl: string;
+}
+
+// **
+// export interface ICompileSubscriptionPostTemplate {
+//   unsubscriptionLinkUrl: string;
+//   siteUrl: string;
+//   email: string;
+//   facebookImageUrl: string;
+//   twitterImageUrl: string;
+//   instagramImageUrl: string;
+//   linkedinImageUrl: string;
+// }

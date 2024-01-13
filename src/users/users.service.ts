@@ -17,7 +17,6 @@ import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 import { MailerService } from '../_mailer/mailer.service';
-import { compileActivationTemplate } from '../_mailer/compilers';
 
 const saltRounds = 10;
 
@@ -58,7 +57,9 @@ export class UsersService {
     const mailOptions = {
       recipients: [{ name: '', address: user.email }],
       subject: 'Email Activation',
-      html: compileActivationTemplate({ email: user.email }),
+      html: await this.mailerService.compileEmailActivationTemplate({
+        email: user.email,
+      }),
     };
     await this.mailerService.sendMail(mailOptions);
 
