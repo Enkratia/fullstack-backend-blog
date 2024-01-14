@@ -7,7 +7,7 @@ import { SubscribeService } from '../subscribe/subscribe.service';
 export class TasksService {
   constructor(private subscribeService: SubscribeService) {}
 
-  @Cron('10 * * * * *')
+  @Cron('25 * * * * *')
   async sendMailToSubscribers() {
     // await this.subscribeService.sendMailToSubscribers();
     console.log('cron');

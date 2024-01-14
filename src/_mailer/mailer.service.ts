@@ -5,13 +5,19 @@ import Handlebars from 'handlebars';
 import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
-import { ISendEmail } from './types/types';
-import { emailActivation } from './templates/emailActivation';
+import {
+  emailActivation,
+  subscriptionInformation,
+  subscriptionPost,
+} from './templates';
+import {
+  ICompileSubscriptionInformationTemplate,
+  ISendEmail,
+} from './types/types';
 import {
   ICompileEmailActivationTemplate,
   ICompileSubscriptionPostTemplate,
 } from './types/types';
-import { subscriptionPost } from './templates/subscriptionPost';
 
 @Injectable()
 export class MailerService {
@@ -50,7 +56,12 @@ export class MailerService {
       html,
     };
 
-    return await transport.sendMail(options);
+    try {
+      const result = await transport.sendMail(options);
+      return result;
+    } catch (error) {
+      throw new Error();
+    }
   }
 
   // **
@@ -71,7 +82,23 @@ export class MailerService {
   }
 
   // **
-  // async compileSubscriptionResponseTemplate({ email }: { email: string }) {}
+  async compileSubscriptionInformationTemplate(
+    vars: ICompileSubscriptionInformationTemplate,
+  ) {
+    // const siteUrl = process.env.FRONTEND_URL;
+    // const unsubscriptionToken = await this.jwtService.signAsync({ email });
+
+    // const t: ICompileSubscriptionInformationTemplate = {
+    //   email: email,
+    //   siteUrl: siteUrl,
+    //   unsubscriptionUrl: siteUrl + '/unsubscribe/' + unsubscriptionToken,
+    // };
+
+    const template = Handlebars.compile(subscriptionInformation);
+    const htmlBody = template(vars);
+
+    return htmlBody;
+  }
 
   // **
   async compileSubscriptionPostTemplate(

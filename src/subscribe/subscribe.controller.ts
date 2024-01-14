@@ -1,8 +1,15 @@
-import { Controller, Get, Post, Body, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseInterceptors,
+  Delete,
+} from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { SubscribeService } from './subscribe.service';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
-import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('subscribe')
 export class SubscribeController {
@@ -17,6 +24,11 @@ export class SubscribeController {
   @Get()
   async findAll() {
     return await this.subscribeService.findAll();
+  }
+
+  @Delete()
+  async unsubscribeEmail(@Body() body: Record<'token', string>) {
+    return await this.subscribeService.unsubscribeEmail(body);
   }
 
   // @Get(':id')

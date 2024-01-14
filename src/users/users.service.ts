@@ -11,7 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import { DataSource, Repository } from 'typeorm';
 
 import { User } from './entities/user.entity';
-import { Post } from '../posts/entities/post.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -61,7 +60,12 @@ export class UsersService {
         email: user.email,
       }),
     };
-    await this.mailerService.sendMail(mailOptions);
+
+    try {
+      await this.mailerService.sendMail(mailOptions);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
 
     return {
       user: result,

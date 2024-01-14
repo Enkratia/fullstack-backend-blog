@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  GoneException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -23,17 +24,42 @@ export class SubscribeService {
     private jwtService: JwtService,
   ) {}
 
+  // ***
   async create(dto: CreateSubscribeDto) {
+    const email = dto.email;
+
+    const socialVars = await this.composeSocialTemplateVars();
+    const token = await this.jwtService.signAsync({ email });
+    const unsubscriptionUrl = socialVars.siteUrl + '/unsubscribe/' + token;
+
+    const mailOptions = {
+      recipients: [{ name: '', address: email }],
+      subject: 'Subscription information',
+      html: await this.mailerService.compileSubscriptionInformationTemplate({
+        email,
+        unsubscriptionUrl,
+        ...socialVars,
+      }),
+    };
+
+    try {
+      await this.mailerService.sendMail(mailOptions);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+
     const subscribe = new Subscribe();
     subscribe.email = dto.email;
 
     return this.subscribeRepository.save(subscribe);
   }
 
+  // ***
   async findAll() {
     return this.subscribeRepository.find();
   }
 
+  // ***
   async sendMailToSubscribers() {
     const emails = await this.subscribeRepository
       .createQueryBuilder('s')
@@ -44,13 +70,16 @@ export class SubscribeService {
       return { name: '', address: obj.email };
     });
 
-    const mostVars = await this.composeMostTemplateVars();
+    const postVars = await this.composePostTemplateVars();
+    const socialVars = await this.composeSocialTemplateVars();
 
     recipients.forEach(async (recipient) => {
-      const token = this.jwtService.signAsync({ email: recipient.address });
+      const token = await this.jwtService.signAsync({
+        email: recipient.address,
+      });
       const unsubscriptionLinkUrl = `${process.env.FRONTEND_URL}/unsubscribe/${token}`;
 
-      const vars = { ...mostVars, unsubscriptionLinkUrl };
+      const vars = { ...postVars, ...socialVars, unsubscriptionLinkUrl };
 
       const mailOptions = {
         recipients: [recipient],
@@ -68,7 +97,25 @@ export class SubscribeService {
     });
   }
 
-  async composeMostTemplateVars() {
+  // ***
+  async unsubscribeEmail(body: Record<'token', string>) {
+    const { email } = await this.jwtService.verify(body.token);
+
+    const isExist = await this.dataSource
+      .getRepository(Subscribe)
+      .findOne({ where: { email } });
+
+    if (!isExist) throw new GoneException('Already unsubscribed');
+
+    const res = await this.dataSource
+      .getRepository(Subscribe)
+      .delete({ email });
+
+    return res;
+  }
+
+  // ***
+  async composeSocialTemplateVars() {
     const siteUrl = process.env.FRONTEND_URL;
 
     const imageBasenUrl = process.env.BACKEND_URL + '/images/social/';
@@ -89,7 +136,21 @@ export class SubscribeService {
     const instagramLinkUrl = footerBottom.socialLinks.instagram;
     const linkedinLinkUrl = footerBottom.socialLinks.linkedin;
 
-    // **
+    return {
+      facebookLinkUrl,
+      twitterLinkUrl,
+      instagramLinkUrl,
+      linkedinLinkUrl,
+      siteUrl,
+      facebookImageUrl,
+      twitterImageUrl,
+      instagramImageUrl,
+      linkedinImageUrl,
+    };
+  }
+
+  // ***
+  async composePostTemplateVars() {
     const post = await this.dataSource
       .getRepository(Post)
       .findOne({ where: { isFeatured: true } });
@@ -103,17 +164,8 @@ export class SubscribeService {
     return {
       title,
       imageUrl,
-      facebookLinkUrl,
-      twitterLinkUrl,
-      instagramLinkUrl,
-      linkedinLinkUrl,
       readMoreUrl,
       description,
-      siteUrl,
-      facebookImageUrl,
-      twitterImageUrl,
-      instagramImageUrl,
-      linkedinImageUrl,
     };
   }
 }

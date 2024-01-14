@@ -35,12 +35,16 @@ export interface ICompileSubscriptionPostTemplate {
 }
 
 // **
-// export interface ICompileSubscriptionPostTemplate {
-//   unsubscriptionLinkUrl: string;
-//   siteUrl: string;
-//   email: string;
-//   facebookImageUrl: string;
-//   twitterImageUrl: string;
-//   instagramImageUrl: string;
-//   linkedinImageUrl: string;
-// }
+export interface ICompileSubscriptionInformationTemplate {
+  unsubscriptionUrl: string;
+  siteUrl: string;
+  email: string;
+  facebookLinkUrl: string;
+  twitterLinkUrl: string;
+  instagramLinkUrl: string;
+  linkedinLinkUrl: string;
+  facebookImageUrl: string;
+  twitterImageUrl: string;
+  instagramImageUrl: string;
+  linkedinImageUrl: string;
+}
