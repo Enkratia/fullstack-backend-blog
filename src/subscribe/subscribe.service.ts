@@ -28,6 +28,9 @@ export class SubscribeService {
   async create(dto: CreateSubscribeDto) {
     const email = dto.email;
 
+    const res = await this.findOneByEmail(email);
+    if (res) return;
+
     const socialVars = await this.composeSocialTemplateVars();
     const token = await this.jwtService.signAsync({ email });
     const unsubscriptionUrl = socialVars.siteUrl + '/unsubscribe/' + token;
@@ -51,12 +54,18 @@ export class SubscribeService {
     const subscribe = new Subscribe();
     subscribe.email = dto.email;
 
-    return this.subscribeRepository.save(subscribe);
+    return await this.subscribeRepository.save(subscribe);
   }
 
   // ***
   async findAll() {
-    return this.subscribeRepository.find();
+    return await this.subscribeRepository.find();
+  }
+
+  async findOneByEmail(email: string) {
+    return await this.subscribeRepository.findOne({
+      where: { email },
+    });
   }
 
   // ***
