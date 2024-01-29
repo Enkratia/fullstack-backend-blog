@@ -17,6 +17,13 @@ export interface ICompileEmailActivationTemplate {
 }
 
 // **
+export interface ICompileResetEmailTemplate {
+  resetPasswordUrl: string;
+  siteUrl: string;
+  email: string;
+}
+
+// **
 export interface ICompileSubscriptionPostTemplate {
   facebookLinkUrl: string;
   twitterLinkUrl: string;

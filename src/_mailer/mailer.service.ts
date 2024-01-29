@@ -7,13 +7,17 @@ import Mail from 'nodemailer/lib/mailer';
 
 import {
   emailActivation,
+  forgetEmail,
   subscriptionInformation,
   subscriptionPost,
 } from './templates';
+
 import {
+  ICompileResetEmailTemplate,
   ICompileSubscriptionInformationTemplate,
   ISendEmail,
 } from './types/types';
+
 import {
   ICompileEmailActivationTemplate,
   ICompileSubscriptionPostTemplate,
@@ -72,7 +76,7 @@ export class MailerService {
     const vars: ICompileEmailActivationTemplate = {
       email: email,
       siteUrl: siteUrl,
-      activationUrl: siteUrl + '/activation/' + activationToken,
+      activationUrl: siteUrl + '/auth/activation/' + activationToken,
     };
 
     const template = Handlebars.compile(emailActivation);
@@ -82,18 +86,26 @@ export class MailerService {
   }
 
   // **
+  async compileResetEmailTemplate({ email }: { email: string }) {
+    const siteUrl = process.env.FRONTEND_URL;
+    const resetToken = await this.jwtService.signAsync({ email });
+
+    const vars: ICompileResetEmailTemplate = {
+      email: email,
+      siteUrl: siteUrl,
+      resetPasswordUrl: siteUrl + '/auth/reset/' + resetToken,
+    };
+
+    const template = Handlebars.compile(forgetEmail);
+    const htmlBody = template(vars);
+
+    return htmlBody;
+  }
+
+  // **
   async compileSubscriptionInformationTemplate(
     vars: ICompileSubscriptionInformationTemplate,
   ) {
-    // const siteUrl = process.env.FRONTEND_URL;
-    // const unsubscriptionToken = await this.jwtService.signAsync({ email });
-
-    // const t: ICompileSubscriptionInformationTemplate = {
-    //   email: email,
-    //   siteUrl: siteUrl,
-    //   unsubscriptionUrl: siteUrl + '/unsubscribe/' + unsubscriptionToken,
-    // };
-
     const template = Handlebars.compile(subscriptionInformation);
     const htmlBody = template(vars);
 

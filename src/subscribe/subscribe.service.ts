@@ -62,6 +62,7 @@ export class SubscribeService {
     return await this.subscribeRepository.find();
   }
 
+  // ***
   async findOneByEmail(email: string) {
     return await this.subscribeRepository.findOne({
       where: { email },
