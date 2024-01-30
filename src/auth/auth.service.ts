@@ -14,8 +14,11 @@ import {
 
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
-import { ForgetUserDto } from './dto/forget-user.dto';
+import { ForgotAuthDto } from './dto/forgot-auth.dto';
 import { MailerService } from '../_mailer/mailer.service';
+import { ResetAuthDto } from './dto/reset-auth.dto';
+
+const saltRounds = 10;
 
 @Injectable()
 export class AuthService {
@@ -65,10 +68,10 @@ export class AuthService {
     };
   }
 
-  async activateUser(body: Record<'token', string>) {
-    const res = await this.jwtService.verify(body.token);
+  async activateUser(query: QueryType) {
+    const payload = await this.jwtService.verify(query.token);
 
-    const isExist = await this.usersService.findByEmail(res.email);
+    const isExist = await this.usersService.findByEmail(payload.email);
 
     if (!isExist) {
       throw new NotFoundException();
@@ -84,11 +87,11 @@ export class AuthService {
     return await this.dataSource.manager.update(User, { id: isExist.id }, user);
   }
 
-  async checkEmail(body: ForgetUserDto) {
+  async checkEmail(body: ForgotAuthDto) {
     const user = await this.usersService.findByEmail(body.email);
 
     if (!user) {
-      throw new NotFoundException('Email not found');
+      throw new NotFoundException();
     }
 
     const mailOptions = {
@@ -108,9 +111,33 @@ export class AuthService {
     return { message: 'email sent' };
   }
 
-  async verifyReset(body: Record<'token', string>) {
-    const res = await this.jwtService.verify(body.token);
+  async verifyReset(query: QueryType) {
+    const { email, expiresIn } = await this.jwtService.verify(query.token);
 
-    return { message: 'token verified' };
+    if (!email) {
+      throw new BadRequestException();
+    }
+
+    if (Date.now() > expiresIn) {
+      throw new GoneException();
+    }
+
+    return { email };
+  }
+
+  async resetPassword(body: ResetAuthDto, query: QueryType) {
+    const { email } = await this.verifyReset(query);
+
+    if (!email) {
+      throw new BadRequestException();
+    }
+
+    const user = new User();
+    user.password = await bcrypt.hash(body.password, saltRounds);
+
+    const res = await this.dataSource.manager.update(User, { email }, user);
+    if (!res.affected) throw new BadRequestException();
+
+    return res;
   }
 }

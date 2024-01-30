@@ -5,6 +5,7 @@ import {
   Body,
   UseInterceptors,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
@@ -27,8 +28,8 @@ export class SubscribeController {
   }
 
   @Delete()
-  async unsubscribeEmail(@Body() body: Record<'token', string>) {
-    return await this.subscribeService.unsubscribeEmail(body);
+  async unsubscribeEmail(@Query() query: QueryType) {
+    return await this.subscribeService.unsubscribeEmail(query);
   }
 
   // @Get(':id')

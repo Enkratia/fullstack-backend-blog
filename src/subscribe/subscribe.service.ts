@@ -108,8 +108,8 @@ export class SubscribeService {
   }
 
   // ***
-  async unsubscribeEmail(body: Record<'token', string>) {
-    const { email } = await this.jwtService.verify(body.token);
+  async unsubscribeEmail(query: QueryType) {
+    const { email } = await this.jwtService.verify(query.token);
 
     const isExist = await this.dataSource
       .getRepository(Subscribe)
@@ -165,7 +165,7 @@ export class SubscribeService {
       .getRepository(Post)
       .findOne({ where: { isFeatured: true } });
 
-    if (!post) throw new BadRequestException('No featured post found');
+    if (!post) throw new BadRequestException('Featured post not found');
 
     const { title, imageUrl, category, contentText, id } = post;
     const readMoreUrl = `${process.env.FRONTEND_URL}/blog/${category}/${id}`;

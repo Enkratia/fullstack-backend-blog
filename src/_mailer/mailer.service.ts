@@ -88,7 +88,10 @@ export class MailerService {
   // **
   async compileResetEmailTemplate({ email }: { email: string }) {
     const siteUrl = process.env.FRONTEND_URL;
-    const resetToken = await this.jwtService.signAsync({ email });
+    const resetToken = await this.jwtService.signAsync({
+      email,
+      expiresIn: Date.now() + 86400000,
+    });
 
     const vars: ICompileResetEmailTemplate = {
       email: email,

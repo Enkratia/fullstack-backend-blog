@@ -7,6 +7,7 @@ import {
   UseInterceptors,
   Patch,
   Get,
+  Query,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
@@ -15,7 +16,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshJwtGuard } from './guards/refresh.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
-import { ForgetUserDto } from './dto/forget-user.dto';
+import { ForgotAuthDto } from './dto/forgot-auth.dto';
+import { ResetAuthDto } from './dto/reset-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -45,19 +47,25 @@ export class AuthController {
 
   @Post('forgot')
   @UseInterceptors(NoFilesInterceptor())
-  async checkEmail(@Body() body: ForgetUserDto) {
+  async checkEmail(@Body() body: ForgotAuthDto) {
     return await this.authService.checkEmail(body);
   }
 
   @Post('verify-reset')
-  async verifyReset(@Body() body: Record<'token', string>) {
-    return await this.authService.verifyReset(body);
+  async verifyReset(@Query() query: QueryType) {
+    return await this.authService.verifyReset(query);
   }
 
   // PATCH
   @Patch('activate')
-  async activateUser(@Body() body: Record<'token', string>) {
-    return await this.authService.activateUser(body);
+  async activateUser(@Query() query: QueryType) {
+    return await this.authService.activateUser(query);
+  }
+
+  @Patch('reset')
+  @UseInterceptors(NoFilesInterceptor())
+  async resetPassword(@Body() body: ResetAuthDto, @Query() query: QueryType) {
+    return await this.authService.resetPassword(body, query);
   }
 
   // Для теста
