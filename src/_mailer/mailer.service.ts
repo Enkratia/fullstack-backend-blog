@@ -6,21 +6,20 @@ import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 
 import {
-  emailActivation,
-  forgetEmail,
-  subscriptionInformation,
-  subscriptionPost,
+  emailActivationTemplate,
+  forgotEmailTemplate,
+  subscriptionInformationTemplate,
+  subscriptionPostTemplate,
+  messageReceivedTemplate,
 } from './templates';
-
-import {
-  ICompileResetEmailTemplate,
-  ICompileSubscriptionInformationTemplate,
-  ISendEmail,
-} from './types/types';
 
 import {
   ICompileEmailActivationTemplate,
   ICompileSubscriptionPostTemplate,
+  ICompileResetEmailTemplate,
+  ICompileSubscriptionInformationTemplate,
+  IMessageReceivedTemplate,
+  ISendEmail,
 } from './types/types';
 
 @Injectable()
@@ -79,7 +78,7 @@ export class MailerService {
       activationUrl: siteUrl + '/auth/activation/' + activationToken,
     };
 
-    const template = Handlebars.compile(emailActivation);
+    const template = Handlebars.compile(emailActivationTemplate);
     const htmlBody = template(vars);
 
     return htmlBody;
@@ -99,7 +98,7 @@ export class MailerService {
       resetPasswordUrl: siteUrl + '/auth/reset/' + resetToken,
     };
 
-    const template = Handlebars.compile(forgetEmail);
+    const template = Handlebars.compile(forgotEmailTemplate);
     const htmlBody = template(vars);
 
     return htmlBody;
@@ -109,7 +108,7 @@ export class MailerService {
   async compileSubscriptionInformationTemplate(
     vars: ICompileSubscriptionInformationTemplate,
   ) {
-    const template = Handlebars.compile(subscriptionInformation);
+    const template = Handlebars.compile(subscriptionInformationTemplate);
     const htmlBody = template(vars);
 
     return htmlBody;
@@ -119,9 +118,23 @@ export class MailerService {
   async compileSubscriptionPostTemplate(
     vars: ICompileSubscriptionPostTemplate,
   ) {
-    const template = Handlebars.compile(subscriptionPost);
+    const template = Handlebars.compile(subscriptionPostTemplate);
 
     const htmlBody = template(vars);
+    return htmlBody;
+  }
+
+  // **
+  async compileMessageReceivedTemplate() {
+    const siteUrl = process.env.FRONTEND_URL;
+
+    const vars: IMessageReceivedTemplate = {
+      siteUrl: siteUrl,
+    };
+
+    const template = Handlebars.compile(messageReceivedTemplate);
+    const htmlBody = template(vars);
+
     return htmlBody;
   }
 }

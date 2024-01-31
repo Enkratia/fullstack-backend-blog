@@ -1,4 +1,4 @@
-export const forgetEmail = `
+export const emailActivationTemplate = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="ru" style="color-scheme: light dark; supported-color-schemes: light dark;" xml:lang="ru">
 
@@ -126,15 +126,9 @@ export const forgetEmail = `
               <tr>
                 <td style="padding: 0 0 5px;">
                   <p style="font-size: 16px; word-wrap: normal; margin: 0;">
-                    Forgot your password?
-                  </p>
-                </td>
-              </tr>
-
-              <tr>
-                <td style="padding: 0 0 25px;">
-                  <p style="font-size: 16px; word-wrap: normal; margin: 0;">
-                    We received a request to reset the password for your account.
+                    You have indicated your email
+                    <a href="mailto:{{email}}" target="_blank" style="text-decoration: none; color: #3366BB; font-size: 16px;">{{email}}</a>
+                    on Finsweet.
                   </p>
                 </td>
               </tr>
@@ -142,7 +136,7 @@ export const forgetEmail = `
               <tr>
                 <td style="padding: 0 0 20px;">
                   <p style="font-size: 16px; color: #000001; margin: 0;">
-                    To reset the password click on the button below:
+                    To confirm please follow this link:
                   </p>
                 </td>
               </tr>
@@ -152,12 +146,22 @@ export const forgetEmail = `
                   <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-spacing: 0; mso-cellspacing: 0; mso-padding-alt: 0;">
                     <tr>
                       <td style="border-radius: 8px; padding: 0;" align="center" bgcolor="#ffd050">
-                        <a href="{{resetPasswordUrl}}" style="background-color: #ffd050; border-radius: 8px; color: #000001; display: block; font-size: 16px; font-weight: normal; font-style: normal; text-decoration: none; min-width: 28px; text-align: center; letter-spacing: 0px; padding: 12px 28px; border: 2px solid #ffd050;" target="_blank">
-                          Reset password
+                        <a href="{{activationUrl}}" style="background-color: #ffd050; border-radius: 8px; color: #000001; display: block; font-size: 16px; font-weight: normal; font-style: normal; text-decoration: none; min-width: 28px; text-align: center; letter-spacing: 0px; padding: 16px 28px; border: 2px solid #ffd050;" target="_blank">
+                          Confirm email
                         </a>
                       </td>
                     </tr>
                   </table>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding: 0;">
+                  <p style="font-size: 16px; margin: 0;">
+                    If you don't register with Finsweet, feel free to ignore this email. Chances are, someone
+                    entered
+                    your email address in error.
+                  </p>
                 </td>
               </tr>
             </table>
@@ -183,4 +187,5 @@ export const forgetEmail = `
 </body>
 
 </html>
+
 `;

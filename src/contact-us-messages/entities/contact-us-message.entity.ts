@@ -16,4 +16,7 @@ export class ContactUsMessage {
 
   @Column()
   message: string;
+
+  @Column({ default: false })
+  read: boolean;
 }

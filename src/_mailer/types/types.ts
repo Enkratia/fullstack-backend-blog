@@ -24,6 +24,11 @@ export interface ICompileResetEmailTemplate {
 }
 
 // **
+export interface IMessageReceivedTemplate {
+  siteUrl: string;
+}
+
+// **
 export interface ICompileSubscriptionPostTemplate {
   facebookLinkUrl: string;
   twitterLinkUrl: string;
