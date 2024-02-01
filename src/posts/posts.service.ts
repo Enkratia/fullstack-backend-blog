@@ -35,9 +35,16 @@ export class PostsService {
     post.contentText = createPostDto.contentText;
     post.imageUrl = imageUrl;
 
-    const tags = createPostDto.tags.split(',').map((tag) => {
-      return new Tag(tag.trim());
-    });
+    const tags = createPostDto.tags.split(',').reduce((current, next) => {
+      const trimmedTag = next.trim();
+
+      if (trimmedTag) {
+        const newTag = new Tag(trimmedTag);
+        current.push(newTag);
+      }
+
+      return current;
+    }, []);
 
     const tagsRes = await this.tagRepository.save(tags);
     post.tags = tagsRes;
@@ -66,9 +73,17 @@ export class PostsService {
       post.imageUrl = imageUrl;
     }
 
-    const tags = updatePostDto.tags.split(',').map((tag) => {
-      return new Tag(tag.trim());
-    });
+    const tags = updatePostDto.tags.split(',').reduce((current, next) => {
+      const trimmedTag = next.trim();
+
+      if (trimmedTag) {
+        const newTag = new Tag(trimmedTag);
+        current.push(newTag);
+      }
+
+      return current;
+    }, []);
+
     const tagsRes = await this.tagRepository.save(tags);
     post.tags = tagsRes;
 
@@ -79,13 +94,16 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
-  async findOne(id: string) {
-    await this.postRepository.increment({ id }, 'views', 1);
+  async findOne(id: string, query: QueryType) {
+    if (query._increment) {
+      await this.postRepository.increment({ id }, 'views', 1);
+    }
 
     return await this.postRepository.findOne({
       where: { id },
       relations: {
         user: true,
+        tags: true,
       },
     });
   }

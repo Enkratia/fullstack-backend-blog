@@ -47,8 +47,8 @@ export class PostsController {
   }
 
   @Get(':id')
-  async findPost(@Param('id') id: string) {
-    return await this.postsService.findOne(id);
+  async findPost(@Param('id') id: string, @Query() query: QueryType) {
+    return await this.postsService.findOne(id, query);
   }
 
   @Get()
