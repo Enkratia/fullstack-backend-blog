@@ -319,8 +319,8 @@ export class PostsService {
     return result;
   }
 
-  async deletePost() {
-    return await this.postRepository.delete({ id: '1' });
+  async deletePost(id: string) {
+    return await this.postRepository.delete({ id });
   }
 }
 
