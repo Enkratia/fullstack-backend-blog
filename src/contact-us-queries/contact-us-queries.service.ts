@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { CreateContactUsQueryDto } from './dto/create-contact-us-query.dto';
 import { UpdateContactUsQueryDto } from './dto/update-contact-us-query.dto';
 import { ContactUsQuery } from './entities/contact-us-query.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class ContactUsQueriesService {
@@ -14,26 +14,20 @@ export class ContactUsQueriesService {
   ) {}
 
   async create(dto: CreateContactUsQueryDto) {
-    const contactUsQuery = new ContactUsQuery();
-    const queries = dto.queries.split(',').map((el) => el.trim());
-    contactUsQuery.queries = queries;
-
+    const contactUsQuery = new ContactUsQuery(dto.content);
     return await this.repository.save(contactUsQuery);
   }
 
-  async update(dto: UpdateContactUsQueryDto) {
-    const contactUsQuery = new ContactUsQuery();
-    const queries = dto.queries.split(',').map((el) => el.trim());
-    contactUsQuery.queries = queries;
-
-    contactUsQuery.id = 0;
+  async update(dto: UpdateContactUsQueryDto, id: number) {
+    const contactUsQuery = new ContactUsQuery(dto.content);
+    contactUsQuery.id = id;
 
     return await this.repository.save(contactUsQuery);
   }
 
   async findAll() {
-    const result = await this.repository.find();
-    return result[0].queries;
+    const res = await this.repository.find();
+    return res;
   }
 
   // findOne(id: number) {

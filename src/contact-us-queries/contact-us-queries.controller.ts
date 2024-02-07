@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   UseInterceptors,
+  Param,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
@@ -24,10 +25,10 @@ export class ContactUsQueriesController {
     return await this.contactUsQueriesService.create(dto);
   }
 
-  @Patch()
+  @Patch(':id')
   @UseInterceptors(NoFilesInterceptor())
-  async update(@Body() dto: UpdateContactUsQueryDto) {
-    return await this.contactUsQueriesService.update(dto);
+  async update(@Body() dto: UpdateContactUsQueryDto, @Param('id') id: number) {
+    return await this.contactUsQueriesService.update(dto, id);
   }
 
   @Get()

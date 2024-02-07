@@ -1,10 +1,14 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class ContactUsQuery {
-  @PrimaryColumn({ default: 0 })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('simple-array')
-  queries: string[];
+  @Column()
+  content: string;
+
+  constructor(content: string) {
+    this.content = content;
+  }
 }
