@@ -13,21 +13,27 @@ export class TestimonialStaticService {
     private readonly testimonialRepository: Repository<TestimonialStatic>,
   ) {}
 
-  async create(createTestimonialStaticDto: CreateTestimonialStaticDto) {
-    const result = await this.testimonialRepository.save(
-      createTestimonialStaticDto,
-    );
+  async create(dto: CreateTestimonialStaticDto) {
+    const testimonialStatic = new TestimonialStatic();
+    testimonialStatic.title = dto.title;
+    testimonialStatic.subtitle = dto.subtitle;
+    testimonialStatic.description = dto.description;
 
-    return result;
+    return await this.testimonialRepository.save(testimonialStatic);
+  }
+
+  async update(dto: UpdateTestimonialStaticDto) {
+    const testimonialStatic = new TestimonialStatic();
+    testimonialStatic.title = dto.title;
+    testimonialStatic.subtitle = dto.subtitle;
+    testimonialStatic.description = dto.description;
+
+    testimonialStatic.id = 0;
+
+    return await this.testimonialRepository.save(testimonialStatic);
   }
 
   async findAll() {
-    const result = await this.testimonialRepository.find();
-
-    return result;
+    return await this.testimonialRepository.find();
   }
-
-  // update(id: number, updateTestimonialStaticDto: UpdateTestimonialStaticDto) {
-  //   return `This action updates a #${id} testimonialStatic`;
-  // }
 }

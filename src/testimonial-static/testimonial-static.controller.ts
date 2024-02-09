@@ -4,11 +4,9 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  Delete,
-  UsePipes,
-  ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { TestimonialStaticService } from './testimonial-static.service';
 import { CreateTestimonialStaticDto } from './dto/create-testimonial-static.dto';
@@ -21,18 +19,19 @@ export class TestimonialStaticController {
   ) {}
 
   @Post()
-  @UsePipes(new ValidationPipe())
-  create(@Body() createTestimonialStaticDto: CreateTestimonialStaticDto) {
-    return this.testimonialStaticService.create(createTestimonialStaticDto);
+  @UseInterceptors(NoFilesInterceptor())
+  create(@Body() dto: CreateTestimonialStaticDto) {
+    return this.testimonialStaticService.create(dto);
+  }
+
+  @Patch()
+  @UseInterceptors(NoFilesInterceptor())
+  update(@Body() dto: UpdateTestimonialStaticDto) {
+    return this.testimonialStaticService.update(dto);
   }
 
   @Get()
   findAll() {
     return this.testimonialStaticService.findAll();
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTestimonialStaticDto: UpdateTestimonialStaticDto) {
-  //   return this.testimonialStaticService.update(+id, updateTestimonialStaticDto);
-  // }
 }
