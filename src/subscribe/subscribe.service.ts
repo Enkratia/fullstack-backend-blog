@@ -63,6 +63,12 @@ export class SubscribeService {
   }
 
   // ***
+  async getCount() {
+    const count = await this.subscribeRepository.count();
+    return { type: 'Subscribers', count };
+  }
+
+  // ***
   async findOneByEmail(email: string) {
     return await this.subscribeRepository.findOne({
       where: { email },

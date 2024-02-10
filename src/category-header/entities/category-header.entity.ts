@@ -2,9 +2,18 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class CategoryHeader {
-  @PrimaryColumn()
-  category: string;
+  @PrimaryColumn({ default: 0 })
+  id: number;
 
   @Column()
-  description: string;
+  economy: string;
+
+  @Column()
+  technology: string;
+
+  @Column()
+  business: string;
+
+  @Column()
+  startup: string;
 }

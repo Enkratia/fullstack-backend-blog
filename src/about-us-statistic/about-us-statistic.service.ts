@@ -23,7 +23,7 @@ export class AboutUsStatisticService {
         count: 0,
       },
       {
-        type: 'Total active Users',
+        type: 'Total active users',
         count: 0,
       },
     ];

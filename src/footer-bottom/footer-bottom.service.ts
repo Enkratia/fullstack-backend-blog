@@ -48,14 +48,6 @@ export class FooterBottomService {
   async findAll() {
     return await this.repository.find();
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} footerBottom`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} footerBottom`;
-  // }
 }
 
 // JSON search

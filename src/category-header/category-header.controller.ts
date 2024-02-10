@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   UseInterceptors,
-  Query,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
@@ -30,7 +29,7 @@ export class CategoryHeaderController {
   }
 
   @Get()
-  async findAll(@Query() query: QueryType) {
-    return await this.categoryHeaderService.findAll(query);
+  async findOne() {
+    return await this.categoryHeaderService.findOne();
   }
 }

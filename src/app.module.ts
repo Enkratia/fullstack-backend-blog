@@ -30,6 +30,7 @@ import { SubscribeModule } from './subscribe/subscribe.module';
 import { ContactUsMessagesModule } from './contact-us-messages/contact-us-messages.module';
 import { MailerModule } from './_mailer/mailer.module';
 import { TasksModule } from './_tasks/_tasks.module';
+import { PrivacyPolicyModule } from './privacy-policy/privacy-policy.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { TasksModule } from './_tasks/_tasks.module';
     ContactUsMessagesModule,
     MailerModule,
     TasksModule,
+    PrivacyPolicyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

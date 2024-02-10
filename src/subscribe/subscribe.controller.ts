@@ -22,6 +22,11 @@ export class SubscribeController {
     return await this.subscribeService.create(dto);
   }
 
+  @Get('count')
+  async getCount() {
+    return await this.subscribeService.getCount();
+  }
+
   @Get()
   async findAll() {
     return await this.subscribeService.findAll();
