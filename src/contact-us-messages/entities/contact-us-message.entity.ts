@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class ContactUsMessage {
@@ -19,4 +24,7 @@ export class ContactUsMessage {
 
   @Column({ default: false })
   read: boolean;
+
+  @CreateDateColumn()
+  createdAt: string;
 }

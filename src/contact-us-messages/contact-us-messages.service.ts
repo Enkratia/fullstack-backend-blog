@@ -36,8 +36,50 @@ export class ContactUsMessagesService {
     return this.repository.save(contactUsMessage);
   }
 
-  async findAll() {
-    return this.repository.find();
+  async markAsRead(id: number) {
+    const message = await this.repository.findOne({ where: { id } });
+    message.read = true;
+
+    await this.repository.save(message);
+    return { message: 'done' };
+  }
+
+  async findAll(query: QueryType) {
+    // WHITEWASH
+    for (let q in query) {
+      if (q.includes(' ')) {
+        throw new BadRequestException('Spaces in keys are not allowed');
+      }
+    }
+
+    const qb = this.repository.createQueryBuilder('c');
+
+    // PAGINATION
+    if (query._page) {
+      const limit = query._limit ? +query._limit : 8;
+
+      qb.take(limit);
+      qb.skip((query._page - 1) * limit);
+
+      delete query._page;
+      delete query._limit;
+    }
+
+    // SORT (ORDER)
+    if (query._sort) {
+      const order = query._order?.toUpperCase() !== 'DESC' ? 'ASC' : 'DESC';
+      qb.orderBy(`c.${query._sort}`, order);
+
+      delete query._sort;
+      delete query._order;
+    }
+
+    const [data, totalCount] = await qb.getManyAndCount();
+    return { data, totalCount };
+  }
+
+  async findById(id: number) {
+    return await this.repository.findOne({ where: { id } });
   }
 
   // findOne(id: number) {

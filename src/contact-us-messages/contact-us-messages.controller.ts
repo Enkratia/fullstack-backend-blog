@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseInterceptors,
+  Query,
+  Patch,
+  Param,
+} from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { ContactUsMessagesService } from './contact-us-messages.service';
@@ -16,9 +25,19 @@ export class ContactUsMessagesController {
     return await this.contactUsMessagesService.create(dto);
   }
 
+  @Patch(':id')
+  async markAsRead(@Param('id') id: number) {
+    return await this.contactUsMessagesService.markAsRead(id);
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: number) {
+    return await this.contactUsMessagesService.findById(id);
+  }
+
   @Get()
-  async findAll() {
-    return await this.contactUsMessagesService.findAll();
+  async findAll(@Query() query: QueryType) {
+    return await this.contactUsMessagesService.findAll(query);
   }
 
   // @Get(':id')
