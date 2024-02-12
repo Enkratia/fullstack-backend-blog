@@ -57,6 +57,12 @@ export class PostsController {
   }
 
   // PATCH
+  // @UseGuards(JwtAuthGuard)
+  @Patch('featured')
+  async markAsFatured(@Query('id') id: string) {
+    return await this.postsService.markAsFatured(id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))

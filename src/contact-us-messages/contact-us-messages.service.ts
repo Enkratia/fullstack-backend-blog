@@ -54,6 +54,26 @@ export class ContactUsMessagesService {
 
     const qb = this.repository.createQueryBuilder('c');
 
+    // FULL-TEXT-SEARCH
+    if (query._q) {
+      const preFormat = query._q.replace(/[!:?()<|]/g, ' ');
+      const formattedSearch = preFormat.trim().replace(/\s+/g, ' & ');
+
+      if (formattedSearch) {
+        qb.where(
+          `to_tsvector('english', c.message) @@ to_tsquery('english', :formattedSearch)`,
+          { formattedSearch: `${formattedSearch}:*` },
+        );
+
+        qb.orWhere(
+          `to_tsvector('english', c.fullname) @@ to_tsquery('english', :formattedSearch)`,
+          { formattedSearch: `${formattedSearch}:*` },
+        );
+      }
+
+      delete query._q;
+    }
+
     // PAGINATION
     if (query._page) {
       const limit = query._limit ? +query._limit : 8;

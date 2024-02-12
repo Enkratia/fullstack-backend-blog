@@ -104,6 +104,21 @@ export class UsersService {
     const qb = this.usersRepository.createQueryBuilder('u');
     qb.leftJoinAndSelect('u.userLinks', 'userLinks');
 
+    // FULL-TEXT-SEARCH
+    if (query._q) {
+      const preFormat = query._q.replace(/[!:?()<|]/g, ' ');
+      const formattedSearch = preFormat.trim().replace(/\s+/g, ' & ');
+
+      if (formattedSearch) {
+        qb.where(
+          `to_tsvector('english', u.fullname) @@ to_tsquery('english', :formattedSearch)`,
+          { formattedSearch: `${formattedSearch}:*` },
+        );
+      }
+
+      delete query._q;
+    }
+
     // PAGINATION
     if (query._page) {
       const limit = query._limit ? +query._limit : 8;

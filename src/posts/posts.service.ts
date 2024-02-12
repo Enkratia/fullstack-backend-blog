@@ -57,6 +57,20 @@ export class PostsService {
     return postRes;
   }
 
+  async markAsFatured(id: string) {
+    const featuredPrev = new Post();
+    featuredPrev.isFeatured = false;
+
+    await this.postRepository.update({ isFeatured: true }, featuredPrev);
+
+    const featuredNext = new Post();
+    featuredNext.isFeatured = true;
+
+    await this.postRepository.update({ id }, featuredNext);
+
+    return { message: 'done' };
+  }
+
   async update(
     id: string,
     updatePostDto: UpdatePostDto,
@@ -128,20 +142,13 @@ export class PostsService {
       const formattedSearch = preFormat.trim().replace(/\s+/g, ' & ');
 
       if (formattedSearch) {
-        qb.orWhere(
+        qb.where(
           `to_tsvector('english', p.category) @@ to_tsquery('english', :formattedSearch)`,
           { formattedSearch: `${formattedSearch}:*` },
         );
 
         qb.orWhere(
           `to_tsvector('english', p.title) @@ to_tsquery('english', :formattedSearch)`,
-          {
-            formattedSearch: `${formattedSearch}:*`,
-          },
-        );
-
-        qb.orWhere(
-          `to_tsvector('english', p.tags) @@ to_tsquery('english', :formattedSearch)`,
           {
             formattedSearch: `${formattedSearch}:*`,
           },
@@ -156,6 +163,13 @@ export class PostsService {
 
         qb.orWhere(
           `to_tsvector('english', user.fullname) @@ to_tsquery('english', :formattedSearch)`,
+          {
+            formattedSearch: `${formattedSearch}:*`,
+          },
+        );
+
+        qb.orWhere(
+          `to_tsvector('english', tags.content) @@ to_tsquery('english', :formattedSearch)`,
           {
             formattedSearch: `${formattedSearch}:*`,
           },
