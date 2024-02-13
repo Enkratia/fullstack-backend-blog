@@ -61,12 +61,12 @@ export class ContactUsMessagesService {
 
       if (formattedSearch) {
         qb.where(
-          `to_tsvector('english', c.message) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', c.message) @@ to_tsquery('simple', :formattedSearch)`,
           { formattedSearch: `${formattedSearch}:*` },
         );
 
         qb.orWhere(
-          `to_tsvector('english', c.fullname) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', c.fullname) @@ to_tsquery('simple', :formattedSearch)`,
           { formattedSearch: `${formattedSearch}:*` },
         );
       }

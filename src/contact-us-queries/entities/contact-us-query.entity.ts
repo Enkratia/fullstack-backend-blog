@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class ContactUsQuery {
@@ -7,6 +12,9 @@ export class ContactUsQuery {
 
   @Column()
   content: string;
+
+  @CreateDateColumn()
+  createdAt: string;
 
   constructor(content: string) {
     this.content = content;

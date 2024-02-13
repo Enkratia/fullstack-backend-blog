@@ -143,33 +143,33 @@ export class PostsService {
 
       if (formattedSearch) {
         qb.where(
-          `to_tsvector('english', p.category) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', p.category) @@ to_tsquery('simple', :formattedSearch)`,
           { formattedSearch: `${formattedSearch}:*` },
         );
 
         qb.orWhere(
-          `to_tsvector('english', p.title) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', p.title) @@ to_tsquery('simple', :formattedSearch)`,
           {
             formattedSearch: `${formattedSearch}:*`,
           },
         );
 
         qb.orWhere(
-          `to_tsvector('english', p.contentText) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', p.contentText) @@ to_tsquery('simple', :formattedSearch)`,
           {
             formattedSearch: `${formattedSearch}:*`,
           },
         );
 
         qb.orWhere(
-          `to_tsvector('english', user.fullname) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', user.fullname) @@ to_tsquery('simple', :formattedSearch)`,
           {
             formattedSearch: `${formattedSearch}:*`,
           },
         );
 
         qb.orWhere(
-          `to_tsvector('english', tags.content) @@ to_tsquery('english', :formattedSearch)`,
+          `to_tsvector('simple', tags.content) @@ to_tsquery('simple', :formattedSearch)`,
           {
             formattedSearch: `${formattedSearch}:*`,
           },

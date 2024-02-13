@@ -6,6 +6,7 @@ import {
   Patch,
   UseInterceptors,
   Param,
+  Query,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
@@ -32,8 +33,8 @@ export class ContactUsQueriesController {
   }
 
   @Get()
-  async findAll() {
-    return await this.contactUsQueriesService.findAll();
+  async findAll(@Query() query: QueryType) {
+    return await this.contactUsQueriesService.findAll(query);
   }
 
   // @Get(':id')

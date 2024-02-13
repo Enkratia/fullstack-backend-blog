@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -30,9 +31,14 @@ export class TestimonialController {
     return await this.testimonialService.create(dto, imageUrl);
   }
 
+  @Get(':id')
+  async findOneById(@Param('id') id: number) {
+    return await this.testimonialService.findOneById(id);
+  }
+
   @Get()
-  async findAll() {
-    return await this.testimonialService.findAll();
+  async findAll(@Query() query: QueryType) {
+    return await this.testimonialService.findAll(query);
   }
 
   @Patch(':id')
@@ -45,13 +51,8 @@ export class TestimonialController {
     return await this.testimonialService.update(id, dto, imageUrl);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.testimonialService.findOne(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.testimonialService.remove(+id);
-  // }
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return await this.testimonialService.remove(id);
+  }
 }

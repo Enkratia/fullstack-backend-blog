@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Testimonial {
@@ -16,4 +21,7 @@ export class Testimonial {
 
   @Column({ default: '' })
   imageUrl: string;
+
+  @CreateDateColumn()
+  createdAt: string;
 }
