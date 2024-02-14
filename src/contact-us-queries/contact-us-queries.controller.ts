@@ -7,6 +7,7 @@ import {
   UseInterceptors,
   Param,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
@@ -37,13 +38,13 @@ export class ContactUsQueriesController {
     return await this.contactUsQueriesService.findAll(query);
   }
 
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return await this.contactUsQueriesService.remove(id);
+  }
+
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.contactUsQueriesService.findOne(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.contactUsQueriesService.remove(+id);
   // }
 }

@@ -74,11 +74,11 @@ export class ContactUsQueriesService {
     return { data, totalCount };
   }
 
+  async remove(id: number) {
+    return await this.repository.delete({ id });
+  }
+
   // findOne(id: number) {
   //   return `This action returns a #${id} contactUsQuery`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} contactUsQuery`;
   // }
 }
