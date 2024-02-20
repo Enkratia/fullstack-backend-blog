@@ -123,6 +123,8 @@ export class PostsService {
   }
 
   async findMany(query: QueryType) {
+    throw new BadRequestException();
+
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {

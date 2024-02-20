@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -31,6 +31,7 @@ export class JoinService {
   }
 
   async findAll() {
+    throw new BadRequestException();
     return await this.joinRepository.find();
   }
 }
