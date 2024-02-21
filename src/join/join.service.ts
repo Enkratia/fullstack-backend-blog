@@ -31,7 +31,7 @@ export class JoinService {
   }
 
   async findAll() {
-    throw new BadRequestException();
+    // throw new BadRequestException();
     return await this.joinRepository.find();
   }
 }

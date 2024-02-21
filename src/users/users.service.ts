@@ -94,7 +94,8 @@ export class UsersService {
   }
 
   async findAll(query: QueryType) {
-    throw new BadRequestException();
+    // return { data: [], totalCount: 0 };
+    // throw new BadRequestException();
 
     // WHITEWASH
     for (let q in query) {

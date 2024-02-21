@@ -37,6 +37,8 @@ export class FeaturedInService {
   }
 
   async findAll(query: QueryType) {
+    // throw new BadRequestException();
+
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {

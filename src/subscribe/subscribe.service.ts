@@ -64,6 +64,7 @@ export class SubscribeService {
 
   // ***
   async getCount() {
+    // throw new BadRequestException();
     const count = await this.subscribeRepository.count();
     return { type: 'Subscribers', count };
   }

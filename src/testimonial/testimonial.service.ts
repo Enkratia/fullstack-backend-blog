@@ -27,6 +27,9 @@ export class TestimonialService {
   }
 
   async findAll(query: QueryType) {
+    // return { data: [], totalCount: 0 };
+    // throw new BadRequestException();
+
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {

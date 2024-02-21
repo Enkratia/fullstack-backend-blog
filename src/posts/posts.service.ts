@@ -109,6 +109,7 @@ export class PostsService {
   }
 
   async findOne(id: string, query: QueryType) {
+    // throw new BadRequestException();
     if (query._increment) {
       await this.postRepository.increment({ id }, 'views', 1);
     }
@@ -123,7 +124,7 @@ export class PostsService {
   }
 
   async findMany(query: QueryType) {
-    throw new BadRequestException();
+    // throw new BadRequestException();
 
     // WHITEWASH
     for (let q in query) {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { CreateAboutUsStaticDto } from './dto/create-about-us-static.dto';
 import { UpdateAboutUsStaticDto } from './dto/update-about-us-static.dto';
