@@ -290,4 +290,15 @@ export class UsersService {
       refreshExpiresIn: Date.now() + +process.env.JWT_REFRESH_EXPIRE_TIME,
     };
   }
+
+  // Перенести в auth(?)
+  async generateBackendAccessToken(payload: { email: string; id: string }) {
+    return {
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,
+        secret: process.env.JWT_SECRET_KEY,
+      }),
+      expiresIn: Date.now() + +process.env.JWT_ACCESS_EXPIRE_TIME,
+    };
+  }
 }

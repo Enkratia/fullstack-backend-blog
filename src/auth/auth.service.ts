@@ -64,7 +64,8 @@ export class AuthService {
     };
 
     return {
-      backendTokens: await this.usersService.generateBackendTokens(payload),
+      backendTokens:
+        await this.usersService.generateBackendAccessToken(payload),
     };
   }
 

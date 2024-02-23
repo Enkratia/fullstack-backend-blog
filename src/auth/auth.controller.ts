@@ -67,11 +67,4 @@ export class AuthController {
   async resetPassword(@Body() body: ResetAuthDto, @Query() query: QueryType) {
     return await this.authService.resetPassword(body, query);
   }
-
-  // Для теста
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // async getProfile(@Req() req) {
-  //   return req.user;
-  // }
 }
