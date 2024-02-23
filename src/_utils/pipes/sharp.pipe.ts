@@ -28,7 +28,7 @@ const processSingle = async (image: Express.Multer.File) => {
     await sharp(image.buffer).toFile(path.join('images', filename));
   } else {
     await sharp(image.buffer)
-      .jpeg({ mozjpeg: true })
+      .jpeg({ mozjpeg: true, quality: 100 })
       .png()
       .toFile(path.join('images', filename));
   }
