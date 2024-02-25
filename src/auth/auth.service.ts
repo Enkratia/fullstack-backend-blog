@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import {
   BadRequestException,
+  ForbiddenException,
   GoneException,
   Injectable,
   NotFoundException,
@@ -31,7 +32,11 @@ export class AuthService {
 
   async validateUser(email: string, pass: string) {
     let isPasswordMatch = false;
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.usersService.findByEmailDangerously(email);
+
+    if (!user.emailVerified) {
+      throw new ForbiddenException('Email not verified');
+    }
 
     if (user) {
       isPasswordMatch = await bcrypt.compare(pass, user.password);
@@ -72,7 +77,9 @@ export class AuthService {
   async activateUser(query: QueryType) {
     const payload = await this.jwtService.verify(query.token);
 
-    const isExist = await this.usersService.findByEmail(payload.email);
+    const isExist = await this.usersService.findByEmailDangerously(
+      payload.email,
+    );
 
     if (!isExist) {
       throw new NotFoundException();
@@ -89,7 +96,7 @@ export class AuthService {
   }
 
   async checkEmail(body: ForgotAuthDto) {
-    const user = await this.usersService.findByEmail(body.email);
+    const user = await this.usersService.findByEmailDangerously(body.email);
 
     if (!user) {
       throw new NotFoundException();

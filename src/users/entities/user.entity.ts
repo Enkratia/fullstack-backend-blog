@@ -22,10 +22,10 @@ export class User {
   @Column()
   fullname: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, select: false })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({ default: '' })
@@ -40,7 +40,7 @@ export class User {
   @Column({ default: '' })
   representation: string;
 
-  @Column({ default: false })
+  @Column({ default: false, select: false })
   emailVerified: boolean;
 
   @OneToOne(() => UserLinks, (userLinks) => userLinks.user, {
@@ -55,9 +55,9 @@ export class User {
   @JoinColumn({ name: 'posts_id' })
   posts: Relation<Post[]>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 }

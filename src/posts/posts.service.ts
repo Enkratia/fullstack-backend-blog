@@ -52,9 +52,9 @@ export class PostsService {
     const postRes = await this.postRepository.save(post);
     user.posts.push(postRes);
 
-    const userRes = await this.userRepository.save(user);
+    await this.userRepository.save(user);
 
-    return postRes;
+    return { message: 'done' };
   }
 
   async markAsFatured(id: string) {
@@ -66,7 +66,11 @@ export class PostsService {
     const featuredNext = new Post();
     featuredNext.isFeatured = true;
 
-    await this.postRepository.update({ id }, featuredNext);
+    const res = await this.postRepository.update({ id }, featuredNext);
+
+    if (!res.affected) {
+      throw new BadRequestException('Post not found');
+    }
 
     return { message: 'done' };
   }
@@ -124,8 +128,6 @@ export class PostsService {
   }
 
   async findMany(query: QueryType) {
-    // throw new BadRequestException();
-
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {

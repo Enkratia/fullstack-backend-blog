@@ -13,14 +13,14 @@ export class TestimonialStaticService {
     private readonly testimonialRepository: Repository<TestimonialStatic>,
   ) {}
 
-  async create(dto: CreateTestimonialStaticDto) {
-    const testimonialStatic = new TestimonialStatic();
-    testimonialStatic.title = dto.title;
-    testimonialStatic.subtitle = dto.subtitle;
-    testimonialStatic.description = dto.description;
+  // async create(dto: CreateTestimonialStaticDto) {
+  //   const testimonialStatic = new TestimonialStatic();
+  //   testimonialStatic.title = dto.title;
+  //   testimonialStatic.subtitle = dto.subtitle;
+  //   testimonialStatic.description = dto.description;
 
-    return await this.testimonialRepository.save(testimonialStatic);
-  }
+  //   return await this.testimonialRepository.save(testimonialStatic);
+  // }
 
   async update(dto: UpdateTestimonialStaticDto) {
     const testimonialStatic = new TestimonialStatic();
@@ -34,7 +34,6 @@ export class TestimonialStaticService {
   }
 
   async findAll() {
-    // throw new BadRequestException();
     return await this.testimonialRepository.find();
   }
 }

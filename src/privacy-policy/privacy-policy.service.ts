@@ -13,12 +13,12 @@ export class PrivacyPolicyService {
     private readonly privacyPolicyRepository: Repository<PrivacyPolicy>,
   ) {}
 
-  async create(dto: CreatePrivacyPolicyDto) {
-    const privacyPolicy = new PrivacyPolicy();
-    privacyPolicy.message = dto.message;
+  // async create(dto: CreatePrivacyPolicyDto) {
+  //   const privacyPolicy = new PrivacyPolicy();
+  //   privacyPolicy.message = dto.message;
 
-    return await this.privacyPolicyRepository.save(privacyPolicy);
-  }
+  //   return await this.privacyPolicyRepository.save(privacyPolicy);
+  // }
 
   async update(dto: UpdatePrivacyPolicyDto) {
     const privacyPolicy = new PrivacyPolicy();
@@ -30,7 +30,6 @@ export class PrivacyPolicyService {
   }
 
   async findOne() {
-    // throw new BadRequestException();
     return await this.privacyPolicyRepository.findOne({ where: { id: 0 } });
   }
 }

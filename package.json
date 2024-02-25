@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "nest": "npx @nestjs/cli",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -20,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.0",
     "@mikro-orm/core": "^5.9.5",
     "@mikro-orm/nestjs": "^5.2.2",
     "@mikro-orm/postgresql": "^5.9.5",

@@ -13,19 +13,19 @@ export class UsMissionService {
     private readonly categoryHeaderRepository: Repository<UsMission>,
   ) {}
 
-  async create(dto: CreateUsMissionDto) {
-    const usMission = new UsMission();
-    usMission.about = {
-      title: dto.aboutTitle,
-      description: dto.aboutDescription,
-    };
-    usMission.mission = {
-      title: dto.missionTitle,
-      description: dto.missionDescription,
-    };
+  // async create(dto: CreateUsMissionDto) {
+  //   const usMission = new UsMission();
+  //   usMission.about = {
+  //     title: dto.aboutTitle,
+  //     description: dto.aboutDescription,
+  //   };
+  //   usMission.mission = {
+  //     title: dto.missionTitle,
+  //     description: dto.missionDescription,
+  //   };
 
-    return await this.categoryHeaderRepository.save(usMission);
-  }
+  //   return await this.categoryHeaderRepository.save(usMission);
+  // }
 
   async update(dto: UpdateUsMissionDto) {
     const usMission = new UsMission();

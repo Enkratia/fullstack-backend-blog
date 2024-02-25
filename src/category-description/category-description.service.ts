@@ -13,15 +13,15 @@ export class CategoryDescriptionService {
     private readonly categoryDescriptionRepository: Repository<CategoryDescription>,
   ) {}
 
-  async create(dto: CreateCategoryDescriptionDto) {
-    const categoryDescription = new CategoryDescription();
-    categoryDescription.business = dto.business;
-    categoryDescription.economy = dto.economy;
-    categoryDescription.startup = dto.startup;
-    categoryDescription.technology = dto.technology;
+  // async create(dto: CreateCategoryDescriptionDto) {
+  //   const categoryDescription = new CategoryDescription();
+  //   categoryDescription.business = dto.business;
+  //   categoryDescription.economy = dto.economy;
+  //   categoryDescription.startup = dto.startup;
+  //   categoryDescription.technology = dto.technology;
 
-    return await this.categoryDescriptionRepository.save(categoryDescription);
-  }
+  //   return await this.categoryDescriptionRepository.save(categoryDescription);
+  // }
 
   async update(dto: UpdateCategoryDescriptionDto) {
     const categoryDescription = new CategoryDescription();

@@ -46,13 +46,6 @@ export class UsersService {
       posts: [],
     });
 
-    const payload = {
-      email: user.email,
-      id: user.id,
-    };
-
-    const { password, ...result } = user;
-
     const mailOptions = {
       recipients: [{ name: '', address: user.email }],
       subject: 'Email Activation',
@@ -67,16 +60,20 @@ export class UsersService {
       throw new BadRequestException(error);
     }
 
-    return {
-      user: result,
-      backendTokens: await this.generateBackendTokens(payload),
-    };
+    return { message: 'done' };
   }
 
-  async findByEmail(email: string) {
-    return await this.usersRepository.findOne({
-      where: { email },
-    });
+  async findByEmailDangerously(email: string) {
+    const qb = this.usersRepository
+      .createQueryBuilder('u')
+      .addSelect('u.email')
+      .addSelect('u.password')
+      .addSelect('u.emailVerified')
+      .addSelect('u.createdAt')
+      .addSelect('u.updatedAt')
+      .where({ email });
+
+    return await qb.getOne();
   }
 
   async findById(id: string) {
@@ -94,9 +91,6 @@ export class UsersService {
   }
 
   async findAll(query: QueryType) {
-    // return { data: [], totalCount: 0 };
-    // throw new BadRequestException();
-
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {
@@ -106,6 +100,7 @@ export class UsersService {
 
     const qb = this.usersRepository.createQueryBuilder('u');
     qb.leftJoinAndSelect('u.userLinks', 'userLinks');
+    // qb.addSelect('u.createdAt');
 
     // FULL-TEXT-SEARCH
     if (query._q) {
@@ -268,9 +263,13 @@ export class UsersService {
 
     const userLinksRes = await this.dataSource.manager.update(
       UserLinks,
-      res.userLinks.id,
+      { id: res.userLinks.id },
       userLinks,
     );
+
+    if (!userLinksRes.affected) {
+      throw new BadRequestException('Failed to update links');
+    }
 
     return userLinksRes;
   }
@@ -302,3 +301,20 @@ export class UsersService {
     };
   }
 }
+
+// ** create
+// const payload = {
+//   email: user.email,
+//   id: user.id,
+// };
+
+// const { password, ...result } = user;
+
+// return {
+//   user: result,
+//   backendTokens: await this.generateBackendTokens(payload),
+// };
+
+//
+// return { data: [], totalCount: 0 };
+// throw new BadRequestException();

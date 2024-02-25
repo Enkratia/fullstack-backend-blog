@@ -13,20 +13,20 @@ export class FooterBottomService {
     private readonly repository: Repository<FooterBottom>,
   ) {}
 
-  async create(dto: CreateFooterBottomDto) {
-    const footerBottom = new FooterBottom();
-    footerBottom.phone = dto.phone;
-    footerBottom.email = dto.email;
-    footerBottom.address = dto.address;
-    footerBottom.socialLinks = {
-      twitter: dto.twitter,
-      facebook: dto.facebook,
-      instagram: dto.instagram,
-      linkedin: dto.linkedin,
-    };
+  // async create(dto: CreateFooterBottomDto) {
+  //   const footerBottom = new FooterBottom();
+  //   footerBottom.phone = dto.phone;
+  //   footerBottom.email = dto.email;
+  //   footerBottom.address = dto.address;
+  //   footerBottom.socialLinks = {
+  //     twitter: dto.twitter,
+  //     facebook: dto.facebook,
+  //     instagram: dto.instagram,
+  //     linkedin: dto.linkedin,
+  //   };
 
-    return await this.repository.save(footerBottom);
-  }
+  //   return await this.repository.save(footerBottom);
+  // }
 
   async update(dto: UpdateFooterBottomDto) {
     const footerBottom = new FooterBottom();
@@ -46,7 +46,6 @@ export class FooterBottomService {
   }
 
   async findAll() {
-    // throw new BadRequestException();
     return await this.repository.find();
   }
 }

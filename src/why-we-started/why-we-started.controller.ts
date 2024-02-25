@@ -6,6 +6,7 @@ import {
   Patch,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -15,21 +16,23 @@ import { CreateWhyWeStartedDto } from './dto/create-why-we-started.dto';
 import { UpdateWhyWeStartedDto } from './dto/update-why-we-started.dto';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('why-we-started')
 export class WhyWeStartedController {
   constructor(private readonly whyWeStartedService: WhyWeStartedService) {}
 
-  @Post()
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  async create(
-    @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
-    @Body() dto: CreateWhyWeStartedDto,
-  ) {
-    return await this.whyWeStartedService.create(dto, imageUrl);
-  }
+  // @Post()
+  // @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  // async create(
+  //   @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
+  //   @Body() dto: CreateWhyWeStartedDto,
+  // ) {
+  //   return await this.whyWeStartedService.create(dto, imageUrl);
+  // }
 
   @Patch()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

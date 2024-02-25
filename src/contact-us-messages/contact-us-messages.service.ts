@@ -45,8 +45,6 @@ export class ContactUsMessagesService {
   }
 
   async findAll(query: QueryType) {
-    // throw new BadRequestException();
-
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {
@@ -103,16 +101,4 @@ export class ContactUsMessagesService {
   async findById(id: number) {
     return await this.repository.findOne({ where: { id } });
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} contactUsMessage`;
-  // }
-
-  // update(id: number, updateContactUsMessageDto: UpdateContactUsMessageDto) {
-  //   return `This action updates a #${id} contactUsMessage`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} contactUsMessage`;
-  // }
 }

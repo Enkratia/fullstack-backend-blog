@@ -31,6 +31,7 @@ import { ContactUsMessagesModule } from './contact-us-messages/contact-us-messag
 import { MailerModule } from './_mailer/mailer.module';
 import { TasksModule } from './_tasks/_tasks.module';
 import { PrivacyPolicyModule } from './privacy-policy/privacy-policy.module';
+import { AbilityModule } from './ability/ability.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { PrivacyPolicyModule } from './privacy-policy/privacy-policy.module';
     MailerModule,
     TasksModule,
     PrivacyPolicyModule,
+    AbilityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

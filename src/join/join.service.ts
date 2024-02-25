@@ -12,13 +12,13 @@ export class JoinService {
     @InjectRepository(Join) private readonly joinRepository: Repository<Join>,
   ) {}
 
-  async create(dto: CreateJoinDto) {
-    const join = new Join();
-    join.title = dto.title;
-    join.description = dto.description;
+  // async create(dto: CreateJoinDto) {
+  //   const join = new Join();
+  //   join.title = dto.title;
+  //   join.description = dto.description;
 
-    return await this.joinRepository.save(join);
-  }
+  //   return await this.joinRepository.save(join);
+  // }
 
   async update(dto: UpdateJoinDto) {
     const join = new Join();
@@ -31,7 +31,6 @@ export class JoinService {
   }
 
   async findAll() {
-    // throw new BadRequestException();
     return await this.joinRepository.find();
   }
 }

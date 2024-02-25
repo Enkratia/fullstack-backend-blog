@@ -13,16 +13,16 @@ export class WhyThisBlogService {
     private readonly whyThisBlogRepository: Repository<WhyThisBlog>,
   ) {}
 
-  async create(dto: CreateWhyThisBlogDto, imageUrl: string) {
-    const whyThisBlog = new WhyThisBlog();
-    whyThisBlog.title = dto.title;
-    whyThisBlog.subtitle = dto.subtitle;
-    whyThisBlog.description = dto.description;
+  // async create(dto: CreateWhyThisBlogDto, imageUrl: string) {
+  //   const whyThisBlog = new WhyThisBlog();
+  //   whyThisBlog.title = dto.title;
+  //   whyThisBlog.subtitle = dto.subtitle;
+  //   whyThisBlog.description = dto.description;
 
-    whyThisBlog.imageUrl = imageUrl;
+  //   whyThisBlog.imageUrl = imageUrl;
 
-    return await this.whyThisBlogRepository.save(whyThisBlog);
-  }
+  //   return await this.whyThisBlogRepository.save(whyThisBlog);
+  // }
 
   async update(dto: UpdateWhyThisBlogDto, imageUrl: string | null) {
     const whyThisBlog = new WhyThisBlog();

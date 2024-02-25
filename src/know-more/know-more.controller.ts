@@ -6,6 +6,7 @@ import {
   Patch,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -15,21 +16,23 @@ import { CreateKnowMoreDto } from './dto/create-know-more.dto';
 import { UpdateKnowMoreDto } from './dto/update-know-more.dto';
 import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('know-more')
 export class KnowMoreController {
   constructor(private readonly knowMoreService: KnowMoreService) {}
 
-  @Post()
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  async create(
-    @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
-    @Body() dto: CreateKnowMoreDto,
-  ) {
-    return await this.knowMoreService.create(dto, imageUrl);
-  }
+  // @Post()
+  // @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  // async create(
+  //   @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
+  //   @Body() dto: CreateKnowMoreDto,
+  // ) {
+  //   return await this.knowMoreService.create(dto, imageUrl);
+  // }
 
   @Patch()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

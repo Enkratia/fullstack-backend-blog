@@ -7,11 +7,13 @@ import {
   Query,
   Patch,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { ContactUsMessagesService } from './contact-us-messages.service';
 import { CreateContactUsMessageDto } from './dto/create-contact-us-message.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('contact-us-messages')
 export class ContactUsMessagesController {
@@ -26,27 +28,20 @@ export class ContactUsMessagesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   async markAsRead(@Param('id') id: number) {
     return await this.contactUsMessagesService.markAsRead(id);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findById(@Param('id') id: number) {
     return await this.contactUsMessagesService.findById(id);
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(@Query() query: QueryType) {
     return await this.contactUsMessagesService.findAll(query);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.contactUsMessagesService.findOne(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.contactUsMessagesService.remove(+id);
-  // }
 }

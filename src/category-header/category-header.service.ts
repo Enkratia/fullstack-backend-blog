@@ -13,15 +13,15 @@ export class CategoryHeaderService {
     private readonly categoryHeaderRepository: Repository<CategoryHeader>,
   ) {}
 
-  async create(dto: CreateCategoryHeaderDto) {
-    const categoryHeader = new CategoryHeader();
-    categoryHeader.startup = dto.startup;
-    categoryHeader.business = dto.business;
-    categoryHeader.economy = dto.economy;
-    categoryHeader.technology = dto.technology;
+  // async create(dto: CreateCategoryHeaderDto) {
+  //   const categoryHeader = new CategoryHeader();
+  //   categoryHeader.startup = dto.startup;
+  //   categoryHeader.business = dto.business;
+  //   categoryHeader.economy = dto.economy;
+  //   categoryHeader.technology = dto.technology;
 
-    return await this.categoryHeaderRepository.save(categoryHeader);
-  }
+  //   return await this.categoryHeaderRepository.save(categoryHeader);
+  // }
 
   async update(dto: UpdateCategoryHeaderDto) {
     const categoryHeader = new CategoryHeader();

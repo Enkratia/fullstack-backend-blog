@@ -10,6 +10,7 @@ import {
   UsePipes,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 
 import { WhyThisBlogService } from './why-this-blog.service';
@@ -19,21 +20,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('why-this-blog')
 export class WhyThisBlogController {
   constructor(private readonly whyThisBlogService: WhyThisBlogService) {}
 
-  @Post()
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  async create(
-    @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
-    @Body() dto: CreateWhyThisBlogDto,
-  ) {
-    return await this.whyThisBlogService.create(dto, imageUrl);
-  }
+  // @Post()
+  // @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  // async create(
+  //   @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
+  //   @Body() dto: CreateWhyThisBlogDto,
+  // ) {
+  //   return await this.whyThisBlogService.create(dto, imageUrl);
+  // }
 
   @Patch()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

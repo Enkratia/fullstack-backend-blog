@@ -6,11 +6,13 @@ import {
   UseInterceptors,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 import { SubscribeService } from './subscribe.service';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('subscribe')
 export class SubscribeController {
@@ -28,27 +30,14 @@ export class SubscribeController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll() {
     return await this.subscribeService.findAll();
   }
 
   @Delete()
+  @UseGuards(JwtAuthGuard)
   async unsubscribeEmail(@Query() query: QueryType) {
     return await this.subscribeService.unsubscribeEmail(query);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.subscribeService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSubscribeDto: UpdateSubscribeDto) {
-  //   return this.subscribeService.update(+id, updateSubscribeDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.subscribeService.remove(+id);
-  // }
 }

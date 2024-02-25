@@ -13,25 +13,25 @@ export class ContactUsService {
     private readonly contactUsRepository: Repository<ContactUs>,
   ) {}
 
-  async create(dto: CreateContactUsDto) {
-    const contactUs = new ContactUs();
-    contactUs.header = {
-      title: dto.headerTitle,
-      subtitle: dto.headerSubtitle,
-      description: dto.headerDescription,
-    };
-    contactUs.time = {
-      days: dto.timeDays,
-      hours: dto.timeHours,
-      description: dto.timeDescription,
-    };
-    contactUs.contact = {
-      phone: dto.contactPhone,
-      email: dto.contactEmail,
-    };
+  // async create(dto: CreateContactUsDto) {
+  //   const contactUs = new ContactUs();
+  //   contactUs.header = {
+  //     title: dto.headerTitle,
+  //     subtitle: dto.headerSubtitle,
+  //     description: dto.headerDescription,
+  //   };
+  //   contactUs.time = {
+  //     days: dto.timeDays,
+  //     hours: dto.timeHours,
+  //     description: dto.timeDescription,
+  //   };
+  //   contactUs.contact = {
+  //     phone: dto.contactPhone,
+  //     email: dto.contactEmail,
+  //   };
 
-    return await this.contactUsRepository.save(contactUs);
-  }
+  //   return await this.contactUsRepository.save(contactUs);
+  // }
 
   async update(dto: UpdateContactUsDto) {
     const contactUs = new ContactUs();

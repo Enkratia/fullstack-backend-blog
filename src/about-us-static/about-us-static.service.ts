@@ -1,6 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { CreateAboutUsStaticDto } from './dto/create-about-us-static.dto';
 import { UpdateAboutUsStaticDto } from './dto/update-about-us-static.dto';
 import { AboutUsStatic } from './entities/about-us-static.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,25 +12,25 @@ export class AboutUsStaticService {
     private readonly repository: Repository<AboutUsStatic>,
   ) {}
 
-  async create(dto: CreateAboutUsStaticDto, imageUrl: string) {
-    const aboutUsStatic = new AboutUsStatic();
-    aboutUsStatic.header = {
-      title: dto.headerTitle,
-      description: dto.headerDescription,
-    };
-    aboutUsStatic.mission = {
-      title: dto.missionTitle,
-      description: dto.missionDescription,
-    };
-    aboutUsStatic.vision = {
-      title: dto.visionTitle,
-      description: dto.visionDescription,
-    };
+  // async create(dto: CreateAboutUsStaticDto, imageUrl: string) {
+  //   const aboutUsStatic = new AboutUsStatic();
+  //   aboutUsStatic.header = {
+  //     title: dto.headerTitle,
+  //     description: dto.headerDescription,
+  //   };
+  //   aboutUsStatic.mission = {
+  //     title: dto.missionTitle,
+  //     description: dto.missionDescription,
+  //   };
+  //   aboutUsStatic.vision = {
+  //     title: dto.visionTitle,
+  //     description: dto.visionDescription,
+  //   };
 
-    aboutUsStatic.imageUrl = imageUrl;
+  //   aboutUsStatic.imageUrl = imageUrl;
 
-    return await this.repository.save(aboutUsStatic);
-  }
+  //   return await this.repository.save(aboutUsStatic);
+  // }
 
   async update(dto: UpdateAboutUsStaticDto, imageUrl: string | null) {
     const aboutUsStatic = new AboutUsStatic();
@@ -60,12 +59,4 @@ export class AboutUsStaticService {
   async findAll() {
     return await this.repository.find();
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} aboutUsStatic`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} aboutUsStatic`;
-  // }
 }

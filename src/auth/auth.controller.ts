@@ -6,7 +6,6 @@ import {
   Body,
   UseInterceptors,
   Patch,
-  Get,
   Query,
 } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';

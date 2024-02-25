@@ -57,14 +57,14 @@ export class PostsController {
   }
 
   // PATCH
-  @UseGuards(JwtAuthGuard)
   @Patch('featured')
+  @UseGuards(JwtAuthGuard)
   async markAsFatured(@Query('id') id: string) {
     return await this.postsService.markAsFatured(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async updatePost(
     @UploadedFile(SharpPipe)
@@ -77,6 +77,7 @@ export class PostsController {
 
   // DELETE
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deletePost(@Param('id') id: string) {
     return await this.postsService.deletePost(id);
   }

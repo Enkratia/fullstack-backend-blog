@@ -77,8 +77,4 @@ export class ContactUsQueriesService {
   async remove(id: number) {
     return await this.repository.delete({ id });
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} contactUsQuery`;
-  // }
 }

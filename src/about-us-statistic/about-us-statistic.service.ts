@@ -13,7 +13,6 @@ export class AboutUsStatisticService {
   ) {}
 
   async findAll() {
-    // throw new BadRequestException();
     const data = [
       {
         type: 'Blogs Published',

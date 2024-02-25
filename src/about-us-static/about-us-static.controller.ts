@@ -1,37 +1,36 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
-  Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 
 import { AboutUsStaticService } from './about-us-static.service';
-import { CreateAboutUsStaticDto } from './dto/create-about-us-static.dto';
 import { UpdateAboutUsStaticDto } from './dto/update-about-us-static.dto';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
-import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('about-us-static')
 export class AboutUsStaticController {
   constructor(private readonly aboutUsStaticService: AboutUsStaticService) {}
 
-  @Post()
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  async create(
-    @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
-    @Body() dto: CreateAboutUsStaticDto,
-  ) {
-    return await this.aboutUsStaticService.create(dto, imageUrl);
-  }
+  // @Post()
+  // @UseGuards(JwtAuthGuard)
+  // @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  // async create(
+  //   @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
+  //   @Body() dto: CreateAboutUsStaticDto,
+  // ) {
+  //   return await this.aboutUsStaticService.create(dto, imageUrl);
+  // }
 
   @Patch()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,
@@ -44,14 +43,4 @@ export class AboutUsStaticController {
   async findAll() {
     return await this.aboutUsStaticService.findAll();
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.aboutUsStaticService.findOne(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.aboutUsStaticService.remove(+id);
-  // }
 }

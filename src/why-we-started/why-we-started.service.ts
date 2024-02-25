@@ -13,16 +13,16 @@ export class WhyWeStartedService {
     private readonly repository: Repository<WhyWeStarted>,
   ) {}
 
-  async create(dto: CreateWhyWeStartedDto, imageUrl: string) {
-    const whyWeStarted = new WhyWeStarted();
-    whyWeStarted.title = dto.title;
-    whyWeStarted.subtitle = dto.subtitle;
-    whyWeStarted.description = dto.description;
+  // async create(dto: CreateWhyWeStartedDto, imageUrl: string) {
+  //   const whyWeStarted = new WhyWeStarted();
+  //   whyWeStarted.title = dto.title;
+  //   whyWeStarted.subtitle = dto.subtitle;
+  //   whyWeStarted.description = dto.description;
 
-    whyWeStarted.imageUrl = imageUrl;
+  //   whyWeStarted.imageUrl = imageUrl;
 
-    return await this.repository.save(whyWeStarted);
-  }
+  //   return await this.repository.save(whyWeStarted);
+  // }
 
   async update(dto: UpdateWhyWeStartedDto, imageUrl: string | null) {
     const whyWeStarted = new WhyWeStarted();

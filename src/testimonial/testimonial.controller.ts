@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -17,12 +18,14 @@ import { TestimonialService } from './testimonial.service';
 import { CreateTestimonialDto } from './dto/create-testimonial.dto';
 import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('testimonial')
 export class TestimonialController {
   constructor(private readonly testimonialService: TestimonialService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async create(
     @UploadedFile(SharpPipe) imageUrl: string | null,
@@ -32,6 +35,7 @@ export class TestimonialController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOneById(@Param('id') id: number) {
     return await this.testimonialService.findOneById(id);
   }
@@ -42,6 +46,7 @@ export class TestimonialController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,
@@ -52,6 +57,7 @@ export class TestimonialController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: number) {
     return await this.testimonialService.remove(id);
   }
