@@ -7,6 +7,7 @@ import { ContactUsMessagesService } from './contact-us-messages.service';
 import { ContactUsMessagesController } from './contact-us-messages.controller';
 import { ContactUsMessage } from './entities/contact-us-message.entity';
 import { MailerService } from '../_mailer/mailer.service';
+import { AbilityModule } from '../ability/ability.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MailerService } from '../_mailer/mailer.service';
       }),
       inject: [ConfigService],
     }),
+    AbilityModule,
   ],
   controllers: [ContactUsMessagesController],
   providers: [ContactUsMessagesService, MailerService],

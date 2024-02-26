@@ -14,6 +14,11 @@ import { CreateContactUsDto } from './dto/create-contact-us.dto';
 import { UpdateContactUsDto } from './dto/update-contact-us.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { ContactUs } from './entities/contact-us.entity';
+
 @Controller('contact-us')
 export class ContactUsController {
   constructor(private readonly contactUsService: ContactUsService) {}
@@ -25,7 +30,8 @@ export class ContactUsController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: ContactUs })
   @UseInterceptors(NoFilesInterceptor())
   async update(@Body() dto: UpdateContactUsDto) {
     return await this.contactUsService.update(dto);

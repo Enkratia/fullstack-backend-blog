@@ -16,6 +16,7 @@ import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 import { MailerService } from '../_mailer/mailer.service';
+import { AbilityFactory } from '../ability/ability.factory';
 
 const saltRounds = 10;
 
@@ -26,6 +27,7 @@ export class UsersService {
     @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
+    private abilityFactory: AbilityFactory,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -275,7 +277,11 @@ export class UsersService {
   }
 
   // Перенести в auth(?)
-  async generateBackendTokens(payload: { email: string; id: string }) {
+  async generateBackendTokens(payload: {
+    email: string;
+    id: string;
+    isAdmin: boolean;
+  }) {
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,
@@ -291,7 +297,11 @@ export class UsersService {
   }
 
   // Перенести в auth(?)
-  async generateBackendAccessToken(payload: { email: string; id: string }) {
+  async generateBackendAccessToken(payload: {
+    email: string;
+    id: string;
+    isAdmin: boolean;
+  }) {
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,

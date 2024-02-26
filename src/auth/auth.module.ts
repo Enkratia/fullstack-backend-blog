@@ -12,9 +12,11 @@ import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import { UserLinks } from '../users/entities/userLinks.entity';
 import { MailerService } from '../_mailer/mailer.service';
+import { AbilityModule } from '../ability/ability.module';
 
 @Module({
   imports: [
+    AbilityModule,
     TypeOrmModule.forFeature([User, UserLinks]),
     PassportModule,
     JwtModule.registerAsync({

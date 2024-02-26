@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UserLinks } from './entities/userLinks.entity';
 import { MailerService } from '../_mailer/mailer.service';
+import { AbilityModule } from '../ability/ability.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MailerService } from '../_mailer/mailer.service';
       }),
       inject: [ConfigService],
     }),
+    AbilityModule,
   ],
   providers: [UsersService, JwtService, MailerService],
   controllers: [UsersController],

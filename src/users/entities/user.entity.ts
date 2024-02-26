@@ -43,6 +43,9 @@ export class User {
   @Column({ default: false, select: false })
   emailVerified: boolean;
 
+  @Column({ default: false })
+  isAdmin: boolean;
+
   @OneToOne(() => UserLinks, (userLinks) => userLinks.user, {
     cascade: true,
   })

@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -32,9 +34,20 @@ import { MailerModule } from './_mailer/mailer.module';
 import { TasksModule } from './_tasks/_tasks.module';
 import { PrivacyPolicyModule } from './privacy-policy/privacy-policy.module';
 import { AbilityModule } from './ability/ability.module';
+import { AbilitiesGuard } from './ability/abilities.guard';
 
 @Module({
   imports: [
+    // JwtModule.registerAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: (configService: ConfigService) => ({
+    //     secret: configService.get('JWT_SECRET_KEY'),
+    //     signOptions: {
+    //       expiresIn: configService.get('JWT_ACCESS_EXPIRE_TIME'),
+    //     },
+    //   }),
+    //   inject: [ConfigService],
+    // }),
     ScheduleModule.forRoot(),
     CategoryHeaderModule,
     ServeStaticModule.forRoot({
@@ -83,6 +96,12 @@ import { AbilityModule } from './ability/ability.module';
     AbilityModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AbilitiesGuard,
+    // },
+  ],
 })
 export class AppModule {}

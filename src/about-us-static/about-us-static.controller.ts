@@ -12,8 +12,12 @@ import { memoryStorage } from 'multer';
 
 import { AboutUsStaticService } from './about-us-static.service';
 import { UpdateAboutUsStaticDto } from './dto/update-about-us-static.dto';
-import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { SharpPipe } from '../_utils/pipes/sharp.pipe';
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { AboutUsStatic } from './entities/about-us-static.entity';
 
 @Controller('about-us-static')
 export class AboutUsStaticController {
@@ -30,7 +34,8 @@ export class AboutUsStaticController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: AboutUsStatic })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

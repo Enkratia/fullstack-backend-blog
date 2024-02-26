@@ -18,6 +18,11 @@ import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { KnowMore } from './entities/know-more.entity';
+
 @Controller('know-more')
 export class KnowMoreController {
   constructor(private readonly knowMoreService: KnowMoreService) {}
@@ -32,7 +37,8 @@ export class KnowMoreController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: KnowMore })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

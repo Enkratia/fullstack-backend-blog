@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { Request } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PostsService } from './posts.service';
@@ -23,13 +24,19 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { Post as PostEntity } from '../posts/entities/post.entity';
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { User } from '../users/entities/user.entity';
+
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   // POST
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async createPost(
     @UploadedFile(FileRequiredPipe, SharpPipe)
@@ -58,7 +65,8 @@ export class PostsController {
 
   // PATCH
   @Patch('featured')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: PostEntity })
   async markAsFatured(@Query('id') id: string) {
     return await this.postsService.markAsFatured(id);
   }
@@ -71,8 +79,9 @@ export class PostsController {
     imageUrl: string | null,
     @Param('id') id: string,
     @Body() updateUserDto: UpdatePostDto,
+    @Req() req: Request,
   ) {
-    return await this.postsService.update(id, updateUserDto, imageUrl);
+    return await this.postsService.update(id, updateUserDto, imageUrl, req);
   }
 
   // DELETE
@@ -82,3 +91,6 @@ export class PostsController {
     return await this.postsService.deletePost(id);
   }
 }
+// **
+// @CheckAbilities(new ReadPostAbility())
+// @CheckAbilities((ability) => ability.can(Action.Delete, User))

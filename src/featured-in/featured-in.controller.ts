@@ -21,12 +21,18 @@ import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { FeaturedIn } from './entities/featured-in.entity';
+
 @Controller('featured-in')
 export class FeaturedInController {
   constructor(private readonly featuredInService: FeaturedInService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Create, subject: FeaturedIn })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async create(
     @UploadedFile(FileRequiredPipe, SharpPipe) imageUrl: string,
@@ -36,7 +42,8 @@ export class FeaturedInController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: FeaturedIn })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,
@@ -47,7 +54,8 @@ export class FeaturedInController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: FeaturedIn })
   async findOneById(@Param('id') id: number) {
     return await this.featuredInService.findOneById(+id);
   }
@@ -58,7 +66,8 @@ export class FeaturedInController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Delete, subject: FeaturedIn })
   async remove(@Param('id') id: number) {
     return await this.featuredInService.remove(id);
   }

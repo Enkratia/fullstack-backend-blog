@@ -14,6 +14,11 @@ import { CreateFooterBottomDto } from './dto/create-footer-bottom.dto';
 import { UpdateFooterBottomDto } from './dto/update-footer-bottom.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { FooterBottom } from './entities/footer-bottom.entity';
+
 @Controller('footer-bottom')
 export class FooterBottomController {
   constructor(private readonly footerBottomService: FooterBottomService) {}
@@ -25,7 +30,8 @@ export class FooterBottomController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: FooterBottom })
   @UseInterceptors(NoFilesInterceptor())
   async update(@Body() dto: UpdateFooterBottomDto) {
     return await this.footerBottomService.update(dto);

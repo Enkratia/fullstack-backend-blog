@@ -1,12 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { ForbiddenError } from '@casl/ability';
+import { Request } from 'express';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 import { User } from '../users/entities/user.entity';
 import { Tag } from './entities/tag.entity';
+import { AbilityFactory, Action } from '../ability/ability.factory';
 
 @Injectable()
 export class PostsService {
@@ -14,11 +21,13 @@ export class PostsService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Tag) private tagRepository: Repository<Tag>,
+    private abilityFactory: AbilityFactory,
   ) {}
 
   async create(
     createPostDto: CreatePostDto,
     id: string,
+    // reqUser: User,
     imageUrl: string | null,
   ) {
     const user = await this.userRepository.findOne({
@@ -79,7 +88,25 @@ export class PostsService {
     id: string,
     updatePostDto: UpdatePostDto,
     imageUrl: string | null,
+    req: Request,
   ) {
+    const postToUpdate = await this.postRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+      },
+    });
+
+    const ability = this.abilityFactory.defineAbility(req.user as User);
+    try {
+      ForbiddenError.from(ability).throwUnlessCan(Action.Update, postToUpdate);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
+    }
+
+    // **
     const post = new Post();
     post.id = id;
     post.title = updatePostDto.title;
