@@ -14,6 +14,11 @@ import { SubscribeService } from './subscribe.service';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { Subscribe } from './entities/subscribe.entity';
+
 @Controller('subscribe')
 export class SubscribeController {
   constructor(private readonly subscribeService: SubscribeService) {}
@@ -25,18 +30,20 @@ export class SubscribeController {
   }
 
   @Get('count')
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Subscribe })
   async getCount() {
     return await this.subscribeService.getCount();
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Subscribe })
   async findAll() {
     return await this.subscribeService.findAll();
   }
 
   @Delete()
-  @UseGuards(JwtAuthGuard)
   async unsubscribeEmail(@Query() query: QueryType) {
     return await this.subscribeService.unsubscribeEmail(query);
   }

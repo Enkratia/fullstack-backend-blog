@@ -20,12 +20,18 @@ import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
 import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { Testimonial } from './entities/testimonial.entity';
+
 @Controller('testimonial')
 export class TestimonialController {
   constructor(private readonly testimonialService: TestimonialService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Create, subject: Testimonial })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async create(
     @UploadedFile(SharpPipe) imageUrl: string | null,
@@ -35,7 +41,8 @@ export class TestimonialController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Read, subject: Testimonial })
   async findOneById(@Param('id') id: number) {
     return await this.testimonialService.findOneById(id);
   }
@@ -46,7 +53,8 @@ export class TestimonialController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: Testimonial })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,
@@ -57,7 +65,8 @@ export class TestimonialController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Delete, subject: Testimonial })
   async remove(@Param('id') id: number) {
     return await this.testimonialService.remove(id);
   }

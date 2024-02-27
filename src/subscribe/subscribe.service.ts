@@ -124,11 +124,9 @@ export class SubscribeService {
 
     if (!isExist) throw new GoneException('Already unsubscribed');
 
-    const res = await this.dataSource
-      .getRepository(Subscribe)
-      .delete({ email });
+    await this.dataSource.getRepository(Subscribe).delete({ email });
 
-    return res;
+    return { message: 'done' };
   }
 
   // ***

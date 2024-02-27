@@ -3,12 +3,15 @@ import * as bcrypt from 'bcrypt';
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { DataSource, Repository } from 'typeorm';
+import { Request } from 'express';
+import { ForbiddenError } from '@casl/ability';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,7 +19,8 @@ import { UserLinks } from './entities/userLinks.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 import { MailerService } from '../_mailer/mailer.service';
-import { AbilityFactory } from '../ability/ability.factory';
+import { AbilityFactory, Action } from '../ability/ability.factory';
+import { HelperService } from '../_utils/helper/helper.service';
 
 const saltRounds = 10;
 
@@ -27,6 +31,7 @@ export class UsersService {
     @InjectDataSource() private dataSource: DataSource,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
+    private readonly helperService: HelperService,
     private abilityFactory: AbilityFactory,
   ) {}
 
@@ -78,21 +83,24 @@ export class UsersService {
     return await qb.getOne();
   }
 
-  async findById(id: string) {
-    const user = await this.usersRepository.findOne({
-      where: { id },
-      relations: {
-        userLinks: true,
-      },
-    });
+  async findById(id: string, req: Request) {
+    const userId = await this.helperService.getUserId(req);
 
-    if (!user) throw new BadRequestException('Cannot find user');
+    const qb = this.usersRepository.createQueryBuilder('u');
+    qb.where({ id }).leftJoinAndSelect('u.userLinks', 'userLinks');
+
+    if (id === userId) {
+      qb.addSelect('u.email');
+    }
+
+    const user = await qb.getOne();
+    if (!user) throw new BadRequestException('User not found');
 
     const { password, ...result } = user;
     return result;
   }
 
-  async findAll(query: QueryType) {
+  async findAll(query: QueryType, req: Request) {
     // WHITEWASH
     for (let q in query) {
       if (q.includes(' ')) {
@@ -102,7 +110,10 @@ export class UsersService {
 
     const qb = this.usersRepository.createQueryBuilder('u');
     qb.leftJoinAndSelect('u.userLinks', 'userLinks');
-    // qb.addSelect('u.createdAt');
+
+    // **
+    const isAdmin = await this.helperService.isAdmin(req);
+    if (isAdmin) qb.addSelect('u.createdAt');
 
     // FULL-TEXT-SEARCH
     if (query._q) {
@@ -228,7 +239,12 @@ export class UsersService {
     return { data, totalCount };
   }
 
-  async updateById(body: UpdateUserDto, imageUrl: string | null, id: string) {
+  async updateById(
+    body: UpdateUserDto,
+    imageUrl: string | null,
+    id: string,
+    req: Request,
+  ) {
     const res = await this.usersRepository.findOne({
       where: { id },
       relations: {
@@ -236,7 +252,18 @@ export class UsersService {
       },
     });
 
-    if (!res) throw new NotFoundException('Transaction not found');
+    if (!res) throw new NotFoundException('User not found');
+
+    // **
+    const ability = this.abilityFactory.defineAbility(req.user as User);
+
+    try {
+      ForbiddenError.from(ability).throwUnlessCan(Action.Update, res);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
+    }
 
     // **
     const user = new User();

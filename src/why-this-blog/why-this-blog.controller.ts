@@ -22,6 +22,11 @@ import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { WhyThisBlog } from './entities/why-this-blog.entity';
+
 @Controller('why-this-blog')
 export class WhyThisBlogController {
   constructor(private readonly whyThisBlogService: WhyThisBlogService) {}
@@ -36,7 +41,8 @@ export class WhyThisBlogController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: WhyThisBlog })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

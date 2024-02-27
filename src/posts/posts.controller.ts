@@ -28,7 +28,6 @@ import { CheckAbilities } from '../ability/abilities.decorator';
 import { Action } from '../ability/ability.factory';
 import { Post as PostEntity } from '../posts/entities/post.entity';
 import { AbilitiesGuard } from '../ability/abilities.guard';
-import { User } from '../users/entities/user.entity';
 
 @Controller('posts')
 export class PostsController {
@@ -66,7 +65,11 @@ export class PostsController {
   // PATCH
   @Patch('featured')
   @UseGuards(JwtAuthGuard, AbilitiesGuard)
-  @CheckAbilities({ action: Action.Update, subject: PostEntity })
+  @CheckAbilities({
+    action: Action.Update,
+    subject: PostEntity,
+    field: 'isFeatured',
+  })
   async markAsFatured(@Query('id') id: string) {
     return await this.postsService.markAsFatured(id);
   }
@@ -87,8 +90,8 @@ export class PostsController {
   // DELETE
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async deletePost(@Param('id') id: string) {
-    return await this.postsService.deletePost(id);
+  async deletePost(@Param('id') id: string, @Req() req: Request) {
+    return await this.postsService.deletePost(id, req);
   }
 }
 // **

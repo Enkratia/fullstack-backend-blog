@@ -6,6 +6,7 @@ import { Post } from '../posts/entities/post.entity';
 export interface IRequiredRule {
   action: Action;
   subject: Subjects;
+  field?: string;
 }
 
 export const CHECK_ABILITY = 'check_ability';
@@ -15,7 +16,8 @@ export const CheckAbilities = (...requirements: IRequiredRule[]) => {
 };
 
 // **
-export class ReadUserAbility implements IRequiredRule {
-  action = Action.Read;
-  subject: Post;
-}
+// export class ReadUserAbility implements IRequiredRule {
+//   action = Action.Read;
+//   subject: Post;
+//   field?: string;
+// }

@@ -5,6 +5,7 @@ import {
   ExtractSubjectType,
   InferSubjects,
   MongoAbility,
+  MongoQuery,
 } from '@casl/ability';
 
 import { User } from '../users/entities/user.entity';
@@ -19,6 +20,13 @@ import { ContactUsQuery } from '../contact-us-queries/entities/contact-us-query.
 import { FeaturedIn } from '../featured-in/entities/featured-in.entity';
 import { FooterBottom } from '../footer-bottom/entities/footer-bottom.entity';
 import { KnowMore } from '../know-more/entities/know-more.entity';
+import { PrivacyPolicy } from '../privacy-policy/entities/privacy-policy.entity';
+import { Subscribe } from '../subscribe/entities/subscribe.entity';
+import { Testimonial } from '../testimonial/entities/testimonial.entity';
+import { UsMission } from '../us-mission/entities/us-mission.entity';
+import { TestimonialStatic } from '../testimonial-static/entities/testimonial-static.entity';
+import { WhyThisBlog } from '../why-this-blog/entities/why-this-blog.entity';
+import { WhyWeStarted } from '../why-we-started/entities/why-we-started.entity';
 
 export enum Action {
   Manage = 'manage',
@@ -28,22 +36,32 @@ export enum Action {
   Delete = 'delete',
 }
 
-export type Subjects = InferSubjects<
-  | typeof Post
-  | typeof User
-  | typeof AboutUsStatic
-  | typeof Join
-  | typeof CategoryDescription
-  | typeof ContactUs
-  | typeof ContactUsMessage
-  | typeof ContactUsQuery
-  | typeof FeaturedIn
-  | typeof FooterBottom
-  | typeof KnowMore
-  | 'all'
->;
+export type Subjects =
+  | InferSubjects<
+      | typeof Post
+      | typeof User
+      | typeof AboutUsStatic
+      | typeof Join
+      | typeof CategoryDescription
+      | typeof ContactUs
+      | typeof ContactUsMessage
+      | typeof ContactUsQuery
+      | typeof FeaturedIn
+      | typeof FooterBottom
+      | typeof KnowMore
+      | typeof PrivacyPolicy
+      | typeof Subscribe
+      | typeof Testimonial
+      | typeof UsMission
+      | typeof TestimonialStatic
+      | typeof WhyThisBlog
+      | typeof WhyWeStarted
+    >
+  | 'all';
 
-export type AppAbility = MongoAbility<[Action, Subjects]>;
+type Conditions = MongoQuery;
+
+export type AppAbility = MongoAbility<[Action, Subjects], Conditions>;
 
 // **
 type FlatPost = Post & {
@@ -59,8 +77,16 @@ export class AbilityFactory {
 
     if (user.isAdmin) {
       can(Action.Manage, 'all');
+
+      cannot(Action.Update, User);
     } else {
       can<FlatPost>(Action.Update, Post, { 'user.id': { $eq: user.id } });
+      can<FlatPost>(Action.Delete, Post, { 'user.id': { $eq: user.id } });
+
+      cannot(Action.Update, Post, ['isFeatured']);
+
+      // **
+      can(Action.Update, User, { id: { $eq: user.id } });
     }
 
     return build({

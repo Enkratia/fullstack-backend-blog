@@ -14,6 +14,11 @@ import { CreateTestimonialStaticDto } from './dto/create-testimonial-static.dto'
 import { UpdateTestimonialStaticDto } from './dto/update-testimonial-static.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { TestimonialStatic } from './entities/testimonial-static.entity';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { AbilitiesGuard } from '../ability/abilities.guard';
+
 @Controller('testimonial-static')
 export class TestimonialStaticController {
   constructor(
@@ -27,14 +32,15 @@ export class TestimonialStaticController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: TestimonialStatic })
   @UseInterceptors(NoFilesInterceptor())
-  update(@Body() dto: UpdateTestimonialStaticDto) {
-    return this.testimonialStaticService.update(dto);
+  async update(@Body() dto: UpdateTestimonialStaticDto) {
+    return await this.testimonialStaticService.update(dto);
   }
 
   @Get()
-  findAll() {
-    return this.testimonialStaticService.findAll();
+  async findAll() {
+    return await this.testimonialStaticService.findAll();
   }
 }

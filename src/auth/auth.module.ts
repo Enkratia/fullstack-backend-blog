@@ -13,6 +13,7 @@ import { User } from '../users/entities/user.entity';
 import { UserLinks } from '../users/entities/userLinks.entity';
 import { MailerService } from '../_mailer/mailer.service';
 import { AbilityModule } from '../ability/ability.module';
+import { HelperService } from '../_utils/helper/helper.service';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AbilityModule } from '../ability/ability.module';
     LocalStrategy,
     JwtStrategy,
     MailerService,
+    HelperService,
   ],
   exports: [AuthService],
 })

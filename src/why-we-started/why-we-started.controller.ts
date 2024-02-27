@@ -18,6 +18,11 @@ import { SharpPipe } from '../_utils/pipes/sharp.pipe';
 import { FileRequiredPipe } from '../_utils/pipes/fileRequired.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { WhyWeStarted } from './entities/why-we-started.entity';
+
 @Controller('why-we-started')
 export class WhyWeStartedController {
   constructor(private readonly whyWeStartedService: WhyWeStartedService) {}
@@ -32,7 +37,8 @@ export class WhyWeStartedController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: WhyWeStarted })
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async update(
     @UploadedFile(SharpPipe) imageUrl: string | null,

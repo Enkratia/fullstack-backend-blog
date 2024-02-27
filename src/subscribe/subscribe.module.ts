@@ -7,9 +7,11 @@ import { SubscribeService } from './subscribe.service';
 import { SubscribeController } from './subscribe.controller';
 import { Subscribe } from './entities/subscribe.entity';
 import { MailerModule } from '../_mailer/mailer.module';
+import { AbilityModule } from '../ability/ability.module';
 
 @Module({
   imports: [
+    AbilityModule,
     TypeOrmModule.forFeature([Subscribe]),
     MailerModule,
     JwtModule.registerAsync({

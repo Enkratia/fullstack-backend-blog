@@ -9,6 +9,7 @@ import { UsersController } from './users.controller';
 import { UserLinks } from './entities/userLinks.entity';
 import { MailerService } from '../_mailer/mailer.service';
 import { AbilityModule } from '../ability/ability.module';
+import { HelperService } from '../_utils/helper/helper.service';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { AbilityModule } from '../ability/ability.module';
     }),
     AbilityModule,
   ],
-  providers: [UsersService, JwtService, MailerService],
+  providers: [UsersService, JwtService, MailerService, HelperService],
   controllers: [UsersController],
   exports: [UsersService],
 })

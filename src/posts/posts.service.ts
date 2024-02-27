@@ -98,6 +98,7 @@ export class PostsService {
     });
 
     const ability = this.abilityFactory.defineAbility(req.user as User);
+
     try {
       ForbiddenError.from(ability).throwUnlessCan(Action.Update, postToUpdate);
     } catch (error) {
@@ -365,7 +366,25 @@ export class PostsService {
     return result;
   }
 
-  async deletePost(id: string) {
+  async deletePost(id: string, req: Request) {
+    const postToDelete = await this.postRepository.findOne({
+      where: { id },
+      relations: {
+        user: true,
+      },
+    });
+
+    const ability = this.abilityFactory.defineAbility(req.user as User);
+
+    try {
+      ForbiddenError.from(ability).throwUnlessCan(Action.Delete, postToDelete);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
+    }
+
+    // **
     return await this.postRepository.delete({ id });
   }
 }

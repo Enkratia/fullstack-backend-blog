@@ -14,6 +14,11 @@ import { CreatePrivacyPolicyDto } from './dto/create-privacy-policy.dto';
 import { UpdatePrivacyPolicyDto } from './dto/update-privacy-policy.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+import { AbilitiesGuard } from '../ability/abilities.guard';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { Action } from '../ability/ability.factory';
+import { PrivacyPolicy } from './entities/privacy-policy.entity';
+
 @Controller('privacy-policy')
 export class PrivacyPolicyController {
   constructor(private readonly privacyPolicyService: PrivacyPolicyService) {}
@@ -25,7 +30,8 @@ export class PrivacyPolicyController {
   // }
 
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AbilitiesGuard)
+  @CheckAbilities({ action: Action.Update, subject: PrivacyPolicy })
   @UseInterceptors(NoFilesInterceptor())
   async update(@Body() dto: UpdatePrivacyPolicyDto) {
     return await this.privacyPolicyService.update(dto);

@@ -3,12 +3,9 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
-  // UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ForbiddenError } from '@casl/ability';
-// import { JwtService } from '@nestjs/jwt';
-// import { Request } from 'express';
 
 import { AbilityFactory } from './ability.factory';
 import { IRequiredRule, CHECK_ABILITY } from './abilities.decorator';
@@ -18,7 +15,6 @@ export class AbilitiesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private caslAbilityFactory: AbilityFactory,
-    // private readonly JwtService: JwtService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -34,7 +30,11 @@ export class AbilitiesGuard implements CanActivate {
 
     try {
       rules.forEach((rule) =>
-        ForbiddenError.from(ability).throwUnlessCan(rule.action, rule.subject),
+        ForbiddenError.from(ability).throwUnlessCan(
+          rule.action,
+          rule.subject,
+          rule.field,
+        ),
       );
 
       return true;

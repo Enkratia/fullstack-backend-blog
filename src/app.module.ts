@@ -34,20 +34,10 @@ import { MailerModule } from './_mailer/mailer.module';
 import { TasksModule } from './_tasks/_tasks.module';
 import { PrivacyPolicyModule } from './privacy-policy/privacy-policy.module';
 import { AbilityModule } from './ability/ability.module';
-import { AbilitiesGuard } from './ability/abilities.guard';
+import { HelperModule } from './_utils/helper/helper.module';
 
 @Module({
   imports: [
-    // JwtModule.registerAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: (configService: ConfigService) => ({
-    //     secret: configService.get('JWT_SECRET_KEY'),
-    //     signOptions: {
-    //       expiresIn: configService.get('JWT_ACCESS_EXPIRE_TIME'),
-    //     },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
     ScheduleModule.forRoot(),
     CategoryHeaderModule,
     ServeStaticModule.forRoot({
@@ -94,6 +84,7 @@ import { AbilitiesGuard } from './ability/abilities.guard';
     TasksModule,
     PrivacyPolicyModule,
     AbilityModule,
+    HelperModule,
   ],
   controllers: [AppController],
   providers: [
