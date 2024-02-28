@@ -111,10 +111,6 @@ export class UsersService {
     const qb = this.usersRepository.createQueryBuilder('u');
     qb.leftJoinAndSelect('u.userLinks', 'userLinks');
 
-    // **
-    const isAdmin = await this.helperService.isAdmin(req);
-    if (isAdmin) qb.addSelect('u.createdAt');
-
     // FULL-TEXT-SEARCH
     if (query._q) {
       const preFormat = query._q.replace(/[!:?()<|]/g, ' ');

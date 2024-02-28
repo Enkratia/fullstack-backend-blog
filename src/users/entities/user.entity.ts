@@ -58,7 +58,7 @@ export class User {
   @JoinColumn({ name: 'posts_id' })
   posts: Relation<Post[]>;
 
-  @CreateDateColumn({ select: false })
+  @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn({ select: false })
