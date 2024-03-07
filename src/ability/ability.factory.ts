@@ -84,10 +84,9 @@ export class AbilityFactory {
       can<FlatPost>(Action.Delete, Post, { 'user.id': { $eq: user.id } });
 
       cannot(Action.Update, Post, ['isFeatured']);
-
-      // **
-      can(Action.Update, User, { id: { $eq: user.id } });
     }
+
+    can(Action.Update, User, { id: { $eq: user.id } });
 
     return build({
       detectSubjectType: (item) =>

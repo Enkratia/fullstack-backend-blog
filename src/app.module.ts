@@ -4,8 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
+// import { APP_GUARD } from '@nestjs/core';
+// import { JwtModule } from '@nestjs/jwt';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -57,7 +57,7 @@ import { HelperModule } from './_utils/helper/helper.module';
         database: configService.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.js, .ts}'],
         subscribers: [__dirname + '/**/*.subscriber{.js, .ts}'],
-        synchronize: true, // ИЗМЕНИТЬ
+        // synchronize: true, // DEVELOPMENT ONLY
       }),
       inject: [ConfigService],
     }),

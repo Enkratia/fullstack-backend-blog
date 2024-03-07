@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+
 import path from 'path';
 
 import sharp from 'sharp';
@@ -24,13 +25,17 @@ const processSingle = async (image: Express.Multer.File) => {
   const { width, height } = sizeOf(image.buffer);
   const filename = Date.now() + '-' + width + 'x' + height + ext;
 
-  if (ext === '.svg') {
-    await sharp(image.buffer).toFile(path.join('images', filename));
-  } else {
-    await sharp(image.buffer)
-      .jpeg({ mozjpeg: true, quality: 100 })
-      .png()
-      .toFile(path.join('images', filename));
+  switch (ext) {
+    case '.svg':
+      await sharp(image.buffer).toFile(path.join('images', filename));
+      break;
+    case '.png':
+      await sharp(image.buffer).png().toFile(path.join('images', filename));
+      break;
+    default:
+      await sharp(image.buffer)
+        .jpeg({ mozjpeg: true })
+        .toFile(path.join('images', filename));
   }
 
   return process.env.BACKEND_URL + '/images/' + filename;
