@@ -34,13 +34,15 @@ export class AuthService {
     let isPasswordMatch = false;
     const user = await this.usersService.findByEmailDangerously(email);
 
+    if (!user) {
+      throw new ForbiddenException('User not found');
+    }
+
     if (!user.emailVerified) {
       throw new ForbiddenException('Email not verified');
     }
 
-    if (user) {
-      isPasswordMatch = await bcrypt.compare(pass, user.password);
-    }
+    isPasswordMatch = await bcrypt.compare(pass, user.password);
 
     if (isPasswordMatch) {
       const { password, ...result } = user;

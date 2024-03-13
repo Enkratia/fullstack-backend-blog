@@ -29,6 +29,7 @@ export class MailerService {
   mailTransport() {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
+      // host: '',
       // pool: true,
       // host: process.env.MAIL_HOST,
       // port: +process.env.MAIL_PORT,
@@ -63,6 +64,7 @@ export class MailerService {
       const result = await transport.sendMail(options);
       return result;
     } catch (error) {
+      console.log(error);
       throw new Error();
     }
   }
