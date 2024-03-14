@@ -42,7 +42,7 @@ import { HelperModule } from './_utils/helper/helper.module';
     CategoryHeaderModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..'),
-      serveRoot: '/api',
+      serveRoot: '/backend-api',
       renderPath: 'images',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
