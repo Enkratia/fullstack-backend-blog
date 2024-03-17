@@ -28,11 +28,11 @@ export class MailerService {
 
   mailTransport() {
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      // host: '',
+      port: +process.env.MAIL_PORT,
+      host: process.env.MAIL_HOST,
+      authMethod: 'PLAIN',
+      // service: 'gmail',
       // pool: true,
-      // host: process.env.MAIL_HOST,
-      // port: +process.env.MAIL_PORT,
       secure: true,
       auth: {
         user: process.env.MAIL_ADDRESS,
@@ -140,3 +140,23 @@ export class MailerService {
     return htmlBody;
   }
 }
+
+// GMAIL:
+// mailTransport() {
+//   const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     // host: '',
+//     // pool: true,
+//     // host: process.env.MAIL_HOST,
+//     // port: +process.env.MAIL_PORT,
+//     secure: true,
+//     auth: {
+//       user: process.env.MAIL_ADDRESS,
+//       pass: process.env.MAIL_PASSWORD,
+//     },
+//     greetingTimeout: 1000,
+//     dnsTimeout: 1000,
+//   });
+
+//   return transporter;
+// }
