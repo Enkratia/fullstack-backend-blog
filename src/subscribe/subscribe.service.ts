@@ -13,6 +13,7 @@ import { Subscribe } from './entities/subscribe.entity';
 import { MailerService } from '../_mailer/mailer.service';
 import { Post } from '../posts/entities/post.entity';
 import { FooterBottom } from '../footer-bottom/entities/footer-bottom.entity';
+import { ISendEmail } from '../_mailer/types/types';
 
 @Injectable()
 export class SubscribeService {
@@ -98,7 +99,8 @@ export class SubscribeService {
 
       const vars = { ...postVars, ...socialVars, unsubscriptionLinkUrl };
 
-      const mailOptions = {
+      const mailOptions: ISendEmail = {
+        isNewsletter: true,
         recipients: [recipient],
         subject: 'Featured post on Finsweet',
         html: await this.mailerService.compileSubscriptionPostTemplate(vars),

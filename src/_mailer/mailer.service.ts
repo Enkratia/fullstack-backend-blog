@@ -26,16 +26,21 @@ import {
 export class MailerService {
   constructor(private jwtService: JwtService) {}
 
-  mailTransport() {
+  mailTransport(isNewsletter: boolean) {
+    const {
+      MAIL_ADDRESS,
+      MAIL_ADDRESS_NEWSLETTER,
+      MAIL_HOST,
+      MAIL_PORT,
+      MAIL_PASSWORD,
+    } = process.env;
+
     const transporter = nodemailer.createTransport({
-      port: +process.env.MAIL_PORT,
-      host: process.env.MAIL_HOST,
-      authMethod: 'PLAIN',
-      // pool: true,
-      // secure: true,
+      host: MAIL_HOST,
+      port: +MAIL_PORT,
       auth: {
-        user: process.env.MAIL_ADDRESS,
-        pass: process.env.MAIL_PASSWORD,
+        user: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
+        pass: MAIL_PASSWORD,
       },
       greetingTimeout: 1000,
       dnsTimeout: 1000,
@@ -45,14 +50,15 @@ export class MailerService {
   }
 
   async sendMail(dto: ISendEmail) {
-    const { recipients, subject, html } = dto;
+    const { MAIL_ADDRESS, MAIL_ADDRESS_NEWSLETTER, MAIL_USER } = process.env;
+    const { isNewsletter, recipients, subject, html } = dto;
 
-    const transport = this.mailTransport();
+    const transport = this.mailTransport(isNewsletter);
 
     const options: Mail.Options = {
       from: {
-        name: process.env.MAIL_USER,
-        address: process.env.MAIL_ADDRESS,
+        name: MAIL_USER,
+        address: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
       },
       to: recipients,
       subject,
@@ -60,10 +66,8 @@ export class MailerService {
     };
 
     try {
-      const result = await transport.sendMail(options);
-      return result;
+      return await transport.sendMail(options);
     } catch (error) {
-      console.log(error);
       throw new Error();
     }
   }
@@ -143,6 +147,9 @@ export class MailerService {
 // GMAIL:
 // mailTransport() {
 //   const transporter = nodemailer.createTransport({
+//     // authMethod: 'PLAIN',
+//     // pool: true,
+//     // secure: true,
 //     service: 'gmail',
 //     // host: '',
 //     // pool: true,

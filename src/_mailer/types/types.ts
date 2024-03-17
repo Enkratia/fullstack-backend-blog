@@ -1,7 +1,7 @@
 import { Address } from 'nodemailer/lib/mailer';
 
 export interface ISendEmail {
-  from?: Address;
+  isNewsletter?: boolean;
   recipients: Address[];
   subject: string;
   html?: string;
