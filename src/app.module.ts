@@ -57,7 +57,7 @@ import { HelperModule } from './_utils/helper/helper.module';
         database: configService.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.js, .ts}'],
         subscribers: [__dirname + '/**/*.subscriber{.js, .ts}'],
-        synchronize: true, // DEVELOPMENT ONLY
+        synchronize: configService.get<boolean>('SYNCHRONIZATION'),
       }),
       inject: [ConfigService],
     }),
