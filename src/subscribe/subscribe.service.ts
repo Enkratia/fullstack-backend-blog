@@ -91,7 +91,10 @@ export class SubscribeService {
     const postVars = await this.composePostTemplateVars();
     const socialVars = await this.composeSocialTemplateVars();
 
-    recipients.forEach(async (recipient) => {
+    for (let recipient of recipients) {
+      // set timeout if needed
+      // await new Promise((resolve) => setTimeout(() => resolve(''), 10000));
+
       const token = await this.jwtService.signAsync({
         email: recipient.address,
       });
@@ -109,11 +112,12 @@ export class SubscribeService {
       try {
         await this.mailerService.sendMail(mailOptions);
       } catch (error) {
-        await this.dataSource
-          .getRepository(Subscribe)
-          .delete({ email: recipient.address });
+        // delete if not found (not every error) : TODO
+        // await this.dataSource
+        //   .getRepository(Subscribe)
+        //   .delete({ email: recipient.address });
       }
-    });
+    }
   }
 
   // ***

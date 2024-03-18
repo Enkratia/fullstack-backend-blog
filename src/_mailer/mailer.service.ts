@@ -38,20 +38,33 @@ export class MailerService {
       MAIL_PASSWORD_NEWSLETTER,
     } = process.env;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      host: isNewsletter ? MAIL_HOST_NEWSLETTER : MAIL_HOST,
-      port: isNewsletter ? +MAIL_PORT_NEWSLETTER : +MAIL_PORT,
-      secure: true,
+    const transactionsTransporter = nodemailer.createTransport({
+      // service: 'gmail',
+      host: MAIL_HOST,
+      port: +MAIL_PORT,
+      // secure: true,
       auth: {
-        user: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
-        pass: isNewsletter ? MAIL_PASSWORD_NEWSLETTER : MAIL_PASSWORD,
+        user: MAIL_ADDRESS,
+        pass: MAIL_PASSWORD,
       },
       greetingTimeout: 1000,
       dnsTimeout: 1000,
     });
 
-    return transporter;
+    const newsletterTransporter = nodemailer.createTransport({
+      // service: 'gmail',
+      host: MAIL_HOST_NEWSLETTER,
+      port: +MAIL_PORT_NEWSLETTER,
+      // secure: true,
+      auth: {
+        user: MAIL_ADDRESS_NEWSLETTER,
+        pass: MAIL_PASSWORD_NEWSLETTER,
+      },
+      greetingTimeout: 1000,
+      dnsTimeout: 1000,
+    });
+
+    return isNewsletter ? newsletterTransporter : transactionsTransporter;
   }
 
   async sendMail(dto: ISendEmail) {
@@ -71,8 +84,11 @@ export class MailerService {
     };
 
     try {
-      return await transport.sendMail(options);
+      const res = await transport.sendMail(options);
+      console.log(res);
+      return res;
     } catch (error) {
+      console.log(error);
       throw new Error();
     }
   }
