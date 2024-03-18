@@ -26,21 +26,26 @@ import {
 export class MailerService {
   constructor(private jwtService: JwtService) {}
 
-  mailTransport(isNewsletter: boolean) {
+  mailTransport(isNewsletter: boolean | undefined) {
     const {
       MAIL_ADDRESS,
       MAIL_ADDRESS_NEWSLETTER,
       MAIL_HOST,
+      MAIL_HOST_NEWSLETTER,
       MAIL_PORT,
+      MAIL_PORT_NEWSLETTER,
       MAIL_PASSWORD,
+      MAIL_PASSWORD_NEWSLETTER,
     } = process.env;
 
     const transporter = nodemailer.createTransport({
-      host: MAIL_HOST,
-      port: +MAIL_PORT,
+      service: 'gmail',
+      host: isNewsletter ? MAIL_HOST_NEWSLETTER : MAIL_HOST,
+      port: isNewsletter ? +MAIL_PORT_NEWSLETTER : +MAIL_PORT,
+      secure: true,
       auth: {
         user: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
-        pass: MAIL_PASSWORD,
+        pass: isNewsletter ? MAIL_PASSWORD_NEWSLETTER : MAIL_PASSWORD,
       },
       greetingTimeout: 1000,
       dnsTimeout: 1000,
@@ -144,25 +149,35 @@ export class MailerService {
   }
 }
 
-// GMAIL:
-// mailTransport() {
+// ///////////////////////////////////////////////////////////
+// TIMEWEB:
 //   const transporter = nodemailer.createTransport({
-//     // authMethod: 'PLAIN',
-//     // pool: true,
-//     // secure: true,
-//     service: 'gmail',
-//     // host: '',
-//     // pool: true,
-//     // host: process.env.MAIL_HOST,
-//     // port: +process.env.MAIL_PORT,
-//     secure: true,
+//     host: MAIL_HOST,
+//     port: +MAIL_PORT,
 //     auth: {
-//       user: process.env.MAIL_ADDRESS,
-//       pass: process.env.MAIL_PASSWORD,
+//       user: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
+//       pass: MAIL_PASSWORD,
 //     },
 //     greetingTimeout: 1000,
 //     dnsTimeout: 1000,
 //   });
 
-//   return transporter;
-// }
+// GOOGLE:
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   host: MAIL_HOST,
+//   port: +MAIL_PORT,
+//   secure: true,
+//   auth: {
+//     user: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
+//     pass: MAIL_PASSWORD,
+//   },
+//   greetingTimeout: 1000,
+//   dnsTimeout: 1000,
+// });
+
+// OTHER TRANSPORTER OPTIONS:
+// authMethod: 'PLAIN',
+// pool: true,
+// secure: true,
+// host: '',
