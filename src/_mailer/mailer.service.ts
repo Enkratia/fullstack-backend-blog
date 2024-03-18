@@ -68,26 +68,28 @@ export class MailerService {
   }
 
   async sendMail(dto: ISendEmail) {
-    const { MAIL_ADDRESS, MAIL_ADDRESS_NEWSLETTER, MAIL_USER } = process.env;
-    const { isNewsletter, recipients, subject, html } = dto;
+    // const { MAIL_ADDRESS, MAIL_ADDRESS_NEWSLETTER, MAIL_USER } = process.env;
+    // const { isNewsletter, recipients, subject, html } = dto;
 
-    const transport = this.mailTransport(isNewsletter);
+    // const transport = this.mailTransport(isNewsletter);
 
-    const options: Mail.Options = {
-      from: {
-        name: MAIL_USER,
-        address: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
-      },
-      to: recipients,
-      subject,
-      html,
-    };
+    // const options: Mail.Options = {
+    //   from: {
+    //     name: MAIL_USER,
+    //     address: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
+    //   },
+    //   to: recipients,
+    //   subject,
+    //   html,
+    // };
 
-    try {
-      return await transport.sendMail(options);
-    } catch (error) {
-      throw new Error();
-    }
+    // try {
+    //   return await transport.sendMail(options);
+    // } catch (error) {
+    //   throw new Error();
+    // }
+
+    throw new Error();
   }
 
   // **
