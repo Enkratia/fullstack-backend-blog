@@ -55,7 +55,7 @@ export class AuthService {
 
   async login(user: any) {
     const payload = {
-      email: user.email,
+      email: user.email.toLowerCase(),
       id: user.id,
       isAdmin: user.isAdmin,
     };
@@ -68,7 +68,7 @@ export class AuthService {
 
   async refreshToken(user: any) {
     const payload = {
-      email: user.email,
+      email: user.email.toLowerCase(),
       id: user.id,
       isAdmin: user.isAdmin,
     };

@@ -27,7 +27,7 @@ export class SubscribeService {
 
   // ***
   async create(dto: CreateSubscribeDto) {
-    const email = dto.email;
+    const email = dto.email.toLowerCase();
 
     const res = await this.findOneByEmail(email);
     if (res) return;
@@ -53,7 +53,7 @@ export class SubscribeService {
     }
 
     const subscribe = new Subscribe();
-    subscribe.email = dto.email;
+    subscribe.email = email;
 
     return await this.subscribeRepository.save(subscribe);
   }
@@ -73,7 +73,7 @@ export class SubscribeService {
   // ***
   async findOneByEmail(email: string) {
     return await this.subscribeRepository.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
     });
   }
 
@@ -126,11 +126,13 @@ export class SubscribeService {
 
     const isExist = await this.dataSource
       .getRepository(Subscribe)
-      .findOne({ where: { email } });
+      .findOne({ where: { email: email.toLowerCase() } });
 
     if (!isExist) throw new GoneException('Already unsubscribed');
 
-    await this.dataSource.getRepository(Subscribe).delete({ email });
+    await this.dataSource
+      .getRepository(Subscribe)
+      .delete({ email: email.toLowerCase() });
 
     return { message: 'done' };
   }
