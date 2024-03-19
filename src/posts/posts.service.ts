@@ -343,7 +343,7 @@ export class PostsService {
 
     const qb = this.tagRepository.createQueryBuilder('t');
     qb.select('t.content as content');
-    qb.addSelect('t.id as id');
+    qb.addSelect('t.id');
     qb.distinctOn(['t.content']);
 
     if (query._page) {

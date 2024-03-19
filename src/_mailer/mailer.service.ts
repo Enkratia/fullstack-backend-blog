@@ -92,10 +92,12 @@ export class MailerService {
   // **
   async compileEmailActivationTemplate({ email }: { email: string }) {
     const siteUrl = process.env.FRONTEND_URL;
-    const activationToken = await this.jwtService.signAsync({ email });
+    const activationToken = await this.jwtService.signAsync({
+      email: email.toLowerCase(),
+    });
 
     const vars: ICompileEmailActivationTemplate = {
-      email: email,
+      email: email.toLowerCase(),
       siteUrl: siteUrl,
       activationUrl: siteUrl + '/auth/activation/' + activationToken,
     };
@@ -110,12 +112,12 @@ export class MailerService {
   async compileResetEmailTemplate({ email }: { email: string }) {
     const siteUrl = process.env.FRONTEND_URL;
     const resetToken = await this.jwtService.signAsync({
-      email,
+      email: email.toLowerCase(),
       expiresIn: Date.now() + 86400000,
     });
 
     const vars: ICompileResetEmailTemplate = {
-      email: email,
+      email: email.toLowerCase(),
       siteUrl: siteUrl,
       resetPasswordUrl: siteUrl + '/auth/reset/' + resetToken,
     };

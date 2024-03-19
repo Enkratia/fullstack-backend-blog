@@ -15,14 +15,16 @@ export class ContactUsMessagesService {
   ) {}
 
   async create(dto: CreateContactUsMessageDto) {
+    const email = dto.email.toLowerCase();
+
     const contactUsMessage = new ContactUsMessage();
     contactUsMessage.fullname = dto.fullname;
-    contactUsMessage.email = dto.email;
+    contactUsMessage.email = email;
     contactUsMessage.query = dto.query;
     contactUsMessage.message = dto.message;
 
     const mailOptions = {
-      recipients: [{ name: '', address: dto.email }],
+      recipients: [{ name: '', address: email }],
       subject: 'Message received',
       html: await this.mailerService.compileMessageReceivedTemplate(),
     };

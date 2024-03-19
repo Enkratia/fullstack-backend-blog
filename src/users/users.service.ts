@@ -36,19 +36,19 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const email = createUserDto.email.toLowerCase();
+
     const isExist = await this.usersRepository.findOne({
-      where: {
-        email: createUserDto.email,
-      },
+      where: { email },
     });
 
     if (isExist) throw new ConflictException('This email already exist');
 
     const mailOptions = {
-      recipients: [{ name: '', address: createUserDto.email }],
+      recipients: [{ name: '', address: email }],
       subject: 'Email Activation',
       html: await this.mailerService.compileEmailActivationTemplate({
-        email: createUserDto.email,
+        email,
       }),
     };
 
@@ -61,7 +61,7 @@ export class UsersService {
     const userLinks = new UserLinks();
     await this.usersRepository.save({
       fullname: createUserDto.fullname,
-      email: createUserDto.email.toLowerCase(),
+      email: email,
       password: await bcrypt.hash(createUserDto.password, saltRounds),
       userLinks: userLinks,
       posts: [],
@@ -73,11 +73,11 @@ export class UsersService {
   async findByEmailDangerously(email: string) {
     const qb = this.usersRepository
       .createQueryBuilder('u')
-      .addSelect('u.email AS email')
-      .addSelect('u.password AS password')
-      .addSelect('u.emailVerified AS emailVerified')
-      .addSelect('u.createdAt AS createdAt')
-      .addSelect('u.updatedAt AS updatedAt')
+      .addSelect('u.email')
+      .addSelect('u.password')
+      .addSelect('u.emailVerified')
+      .addSelect('u.createdAt')
+      .addSelect('u.updatedAt')
       .where({ email: email.toLowerCase() });
 
     return await qb.getOne();

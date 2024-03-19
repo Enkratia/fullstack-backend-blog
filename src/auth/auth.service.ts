@@ -101,17 +101,18 @@ export class AuthService {
   }
 
   async checkEmail(body: ForgotAuthDto) {
-    const user = await this.usersService.findByEmailDangerously(body.email);
+    const email = body.email.toLowerCase();
+    const user = await this.usersService.findByEmailDangerously(email);
 
     if (!user) {
       throw new NotFoundException();
     }
 
     const mailOptions = {
-      recipients: [{ name: '', address: user.email }],
+      recipients: [{ name: '', address: email }],
       subject: 'Password recovery',
       html: await this.mailerService.compileResetEmailTemplate({
-        email: user.email,
+        email,
       }),
     };
 
