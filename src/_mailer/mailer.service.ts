@@ -39,10 +39,8 @@ export class MailerService {
     } = process.env;
 
     const transactionsTransporter = nodemailer.createTransport({
-      // service: 'gmail',
       host: MAIL_HOST,
       port: +MAIL_PORT,
-      // secure: true,
       auth: {
         user: MAIL_ADDRESS,
         pass: MAIL_PASSWORD,
@@ -52,10 +50,8 @@ export class MailerService {
     });
 
     const newsletterTransporter = nodemailer.createTransport({
-      // service: 'gmail',
       host: MAIL_HOST_NEWSLETTER,
       port: +MAIL_PORT_NEWSLETTER,
-      // secure: true,
       auth: {
         user: MAIL_ADDRESS_NEWSLETTER,
         pass: MAIL_PASSWORD_NEWSLETTER,
@@ -68,28 +64,29 @@ export class MailerService {
   }
 
   async sendMail(dto: ISendEmail) {
-    // const { MAIL_ADDRESS, MAIL_ADDRESS_NEWSLETTER, MAIL_USER } = process.env;
-    // const { isNewsletter, recipients, subject, html } = dto;
+    const { MAIL_ADDRESS, MAIL_ADDRESS_NEWSLETTER, MAIL_USER } = process.env;
+    const { isNewsletter, recipients, subject, html } = dto;
 
-    // const transport = this.mailTransport(isNewsletter);
+    const transport = this.mailTransport(isNewsletter);
 
-    // const options: Mail.Options = {
-    //   from: {
-    //     name: MAIL_USER,
-    //     address: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
-    //   },
-    //   to: recipients,
-    //   subject,
-    //   html,
-    // };
+    const options: Mail.Options = {
+      from: {
+        name: MAIL_USER,
+        address: isNewsletter ? MAIL_ADDRESS_NEWSLETTER : MAIL_ADDRESS,
+      },
+      to: recipients,
+      subject,
+      html,
+    };
 
-    // try {
-    //   return await transport.sendMail(options);
-    // } catch (error) {
-    //   throw new Error();
-    // }
-
-    throw new Error();
+    try {
+      const res = await transport.sendMail(options);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new Error();
+    }
   }
 
   // **
