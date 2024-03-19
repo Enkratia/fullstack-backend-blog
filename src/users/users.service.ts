@@ -44,20 +44,11 @@ export class UsersService {
 
     if (isExist) throw new ConflictException('This email already exist');
 
-    const userLinks = new UserLinks();
-    const user = await this.usersRepository.save({
-      fullname: createUserDto.fullname,
-      email: createUserDto.email,
-      password: await bcrypt.hash(createUserDto.password, saltRounds),
-      userLinks: userLinks,
-      posts: [],
-    });
-
     const mailOptions = {
-      recipients: [{ name: '', address: user.email }],
+      recipients: [{ name: '', address: createUserDto.email }],
       subject: 'Email Activation',
       html: await this.mailerService.compileEmailActivationTemplate({
-        email: user.email,
+        email: createUserDto.email,
       }),
     };
 
@@ -66,6 +57,15 @@ export class UsersService {
     } catch (error) {
       throw new BadRequestException(error);
     }
+
+    const userLinks = new UserLinks();
+    await this.usersRepository.save({
+      fullname: createUserDto.fullname,
+      email: createUserDto.email,
+      password: await bcrypt.hash(createUserDto.password, saltRounds),
+      userLinks: userLinks,
+      posts: [],
+    });
 
     return { message: 'done' };
   }
