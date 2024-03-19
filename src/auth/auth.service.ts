@@ -32,10 +32,11 @@ export class AuthService {
 
   async validateUser(email: string, pass: string) {
     let isPasswordMatch = false;
+
     const user = await this.usersService.findByEmailDangerously(email);
 
     if (!user) {
-      throw new ForbiddenException('User not found');
+      throw new UnauthorizedException('Email or password are incorrect');
     }
 
     if (!user.emailVerified) {

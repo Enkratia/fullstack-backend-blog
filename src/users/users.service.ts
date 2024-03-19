@@ -42,8 +42,6 @@ export class UsersService {
       },
     });
 
-    console.log('isExist: ', isExist);
-
     if (isExist) throw new ConflictException('This email already exist');
 
     const mailOptions = {
@@ -55,17 +53,15 @@ export class UsersService {
     };
 
     try {
-      const res = await this.mailerService.sendMail(mailOptions);
-      console.log('res2', res);
+      await this.mailerService.sendMail(mailOptions);
     } catch (error) {
-      console.log('error2', error);
       throw new BadRequestException(error);
     }
 
     const userLinks = new UserLinks();
     await this.usersRepository.save({
       fullname: createUserDto.fullname,
-      email: createUserDto.email,
+      email: createUserDto.email.toLowerCase(),
       password: await bcrypt.hash(createUserDto.password, saltRounds),
       userLinks: userLinks,
       posts: [],
@@ -77,12 +73,12 @@ export class UsersService {
   async findByEmailDangerously(email: string) {
     const qb = this.usersRepository
       .createQueryBuilder('u')
-      .addSelect('u.email')
-      .addSelect('u.password')
-      .addSelect('u.emailVerified')
-      .addSelect('u.createdAt')
-      .addSelect('u.updatedAt')
-      .where({ email });
+      .addSelect('u.email AS email')
+      .addSelect('u.password AS password')
+      .addSelect('u.emailVerified AS emailVerified')
+      .addSelect('u.createdAt AS createdAt')
+      .addSelect('u.updatedAt AS updatedAt')
+      .where({ email: email.toLowerCase() });
 
     return await qb.getOne();
   }
@@ -268,7 +264,7 @@ export class UsersService {
     // **
     const user = new User();
     user.fullname = body.fullname;
-    user.email = body.email;
+    user.email = body.email.toLowerCase();
     user.company = body.company;
     user.profession = body.profession;
     user.representation = body.representation;
