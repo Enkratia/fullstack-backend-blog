@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import Handlebars from 'handlebars';
@@ -81,11 +81,11 @@ export class MailerService {
 
     try {
       const res = await transport.sendMail(options);
-      console.log(res);
+      console.log('res: ', res);
       return res;
     } catch (error) {
-      console.log(error);
-      throw new Error();
+      console.log('error:', error);
+      throw new BadRequestException(error);
     }
   }
 

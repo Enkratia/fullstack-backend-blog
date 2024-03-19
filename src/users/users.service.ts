@@ -42,6 +42,8 @@ export class UsersService {
       },
     });
 
+    console.log('isExist: ', isExist);
+
     if (isExist) throw new ConflictException('This email already exist');
 
     const mailOptions = {
@@ -53,8 +55,10 @@ export class UsersService {
     };
 
     try {
-      await this.mailerService.sendMail(mailOptions);
+      const res = await this.mailerService.sendMail(mailOptions);
+      console.log('res2', res);
     } catch (error) {
+      console.log('error2', error);
       throw new BadRequestException(error);
     }
 
