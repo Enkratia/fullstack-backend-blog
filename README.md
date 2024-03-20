@@ -9,9 +9,7 @@ npm run start:dev
 
 ### Перейти на хостинг:
 
-[`https://finsweet.ru`](https://finsweet.ru) (Фронтенд)
-
-[`https://finsweet.ru/backend-api`](https://finsweet.ru/backend-api) (Бэкенд)
+[`https://finsweet.ru`](https://finsweet.ru)
 
 ### Стек:
 - Nest.js
