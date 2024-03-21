@@ -24,6 +24,8 @@ manofthetreasure@gmail.com
 ### Стек:
 - Nest.js
 - Typescript
+- Postgres
+- TypeORM
 - Docker
 - Nginx
 
